@@ -1,0 +1,8 @@
+[Activity]
+name = Flappy Birds
+activity_version = 1
+bundle_id = org.sugarlabs.flappy
+icon = flappy
+exec = sugar-activity activity.Activity
+license = GPLv3
+summary = An arcade game
