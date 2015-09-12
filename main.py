@@ -43,10 +43,13 @@ class game:
         self.right=True
         
         self.leftclick=self.rightclick=0
-        
+       
         self.leftmove=0
         self.rightmove=0
         
+        
+        
+        self.left_angle = self.right_angle = 0
         
         
         
@@ -59,8 +62,8 @@ class game:
         
         self.speed=8
         
-        
-        
+        self.anglespeed=3
+        self.anglelimit=30
         
         
         #self.welcomeflag=1
@@ -178,9 +181,9 @@ class game:
             
             # Car Blitting
             
-            self.gameDisplay.blit(self.leftcar,(self.leftcar_x,550))
+            self.gameDisplay.blit(pygame.transform.rotate(self.leftcar,self.left_angle),(self.leftcar_x,550))
             
-            self.gameDisplay.blit(self.rightcar,(self.rightcar_x,550))
+            self.gameDisplay.blit(pygame.transform.rotate(self.rightcar,self.right_angle),(self.rightcar_x,550))
             
             
             #self.gameDisplay.blit(self.leftcar,(510,550))
@@ -197,6 +200,31 @@ class game:
             #600
             
             
+            # Car angle reorientation
+            
+            if(self.leftmove==0):
+                
+                if(self.left_angle>0):
+                    self.left_angle-=self.anglespeed
+                    
+                if(self.left_angle<0):
+                    self.left_angle+=self.anglespeed
+            
+            
+            if(self.rightmove==0):
+                
+                if(self.right_angle>0):
+                    self.right_angle-=self.anglespeed
+                    
+                if(self.right_angle<0):
+                    self.right_angle+=self.anglespeed
+            
+            
+            
+            
+            
+            # Car Movements
+            
             if(self.leftmove==1):
                 
                 
@@ -205,6 +233,15 @@ class game:
                     
                     self.leftcar_x+=self.speed
                     
+                    
+                    
+                    #Angle update
+                    if(self.left_angle>-self.anglelimit):
+                        self.left_angle-=self.anglespeed
+                    
+                    
+                    
+                    
                     if(self.leftcar_x>=510):
                         
                         self.leftmove=0
@@ -212,6 +249,15 @@ class game:
                         
                 else:
                     self.leftcar_x-=self.speed
+                    
+                    
+                    #Angle update
+                    
+                    if(self.left_angle<self.anglelimit):
+                        self.left_angle+=self.anglespeed
+                    
+                    
+                    
                     
                     if(self.leftcar_x<=390):
                         
@@ -226,6 +272,13 @@ class game:
                     
                     self.rightcar_x-=self.speed
                     
+                    #Angle update
+                    
+                    if(self.right_angle<self.anglelimit):
+                        self.right_angle+=self.anglespeed
+                    
+                    
+                    
                     if(self.rightcar_x<=640):
                         
                         self.rightmove=0
@@ -235,6 +288,12 @@ class game:
                 else:
                     
                     self.rightcar_x+=self.speed
+                    
+                    # Angle update
+                    
+                    if(self.right_angle>-self.anglelimit):
+                        self.right_angle-=self.anglespeed
+                    
                     
                     if(self.rightcar_x>=760):
                         
