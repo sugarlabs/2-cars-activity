@@ -1,6 +1,11 @@
 
 
 import pygame
+import gtk
+import sys
+
+
+
 from random import randint
 #from scorescreen import scorescreen
     
@@ -32,13 +37,27 @@ class element(object):
         self.x=x_list[randint(0,3)]
         self.y=-10
         self.flag=0
+        self.shape=0
+        #self.move=1
+        self.blink=0
+        self.c=0
       
         if(self.x==390 or self.x==510):
       
             self.element=element_list[randint(0,1)]
+            if(self.element==redcircle):
+                self.shape=1
+            else:
+                self.shape=2
+            
         
         else:
             self.element=element_list[randint(2,3)]
+            
+            if(self.element==bluecircle):
+                self.shape=1
+            else:
+                self.shape=2
             
             
             
@@ -62,7 +81,7 @@ class element(object):
              
             if(self.element==redsquare or self.element==bluesquare):
                  
-                sys.exit()
+                g.collision=1
                  
              
             if(self.element==redcircle or self.element==bluecircle):
@@ -70,15 +89,40 @@ class element(object):
                 g.score+=1
                 g.objectlist.remove(self)
                  
-                 
-        self.y+=5         
+        
+        if(g.move==1):         
+            self.y+=5         
         
          
-        g.gameDisplay.blit(self.element,(self.x,self.y))
          
+         
+        if(self.blink==1): 
+             self.c+=1
+             
+             if(self.c>50):
+                 self.c=0
+             
+             if(self.c<25):
+                 g.gameDisplay.blit(self.element,(self.x,self.y))
+         
+        else:
+            
+            g.gameDisplay.blit(self.element,(self.x,self.y))
+            
+        
+        
         if(self.y>=780):
             self.flag=1
             g.objectlist.remove(self)
+            
+        
+        
+        if(self.shape==1 and self.y>=640):
+            
+            g.move=0
+            self.blink=1
+            
+           
          
                  
                  

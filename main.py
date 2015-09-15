@@ -48,7 +48,7 @@ class game:
        
         self.leftmove=0
         self.rightmove=0
-        
+        self.move=1
         
         
         self.left_angle = self.right_angle = 0
@@ -76,11 +76,15 @@ class game:
         self.objectlist=[]
         
         
+        self.i=0
+        self.last=element()
         
+        self.objectlist.append(self.last)
         
+        self.lastright=self.lastleft=0
+        self.timer=0
         
-        self.objectlist.append(element())
-        
+        self.collision=0
         
         
         
@@ -207,15 +211,74 @@ class game:
             
             
             
+            self.i+=1
+            
+            if(self.i>60):
+                self.i=0
+                
+            if((self.i==20 or self.i==50) and self.move==1): 
+                
+                self.current=self.lastleft=self.lastright=element()
+                
+                check=True
+                
+                if(self.last.x<530):
+                    
+                    while(True):
+                        
+                        self.current=element()
+                        if(self.current.x>530 and self.current.element!=self.lastright.element ):
+                            
+                            break;
+                        
+                        
+                    self.last=self.lastright=self.current 
+                    self.objectlist.append(self.lastright)   
+                        
+                        
+                          
+                    
+                    
+                            
+                else:
+                    
+                    while(True):
+                        
+                        self.current=element()
+                        if(self.current.x<530 and self.current.element!=self.lastleft.element):
+                            
+                            break;
+                        
+                    self.last=self.lastleft=self.current 
+                    self.objectlist.append(self.lastleft) 
+                    
+                    
+                        
+                        
+                        
+                        
+                
             
             
             # Elements display
             
-            for i in self.objectlist:
+            for j in self.objectlist:
                 
-                i.display(g)
+                
+                j.display(g)
                 
             
+            
+            
+            if(self.move==0):
+                self.timer+=1
+                
+                if(self.timer>=150):
+                    sys.exit()
+                
+                
+            if(self.collision==1):
+                sys.exit()
             
             
             
@@ -341,7 +404,7 @@ class game:
             
             #event = pygame.event.poll()
             
-            if event.type==pygame.KEYDOWN and event.key==276 and self.leftclick==0:
+            if event.type==pygame.KEYDOWN and event.key==276 and self.leftclick==0 and self.move==1:
                 #jump.play(0)
                 #self.left_transit=1
                 self.leftmove=1
@@ -360,7 +423,7 @@ class game:
                     
             #event = pygame.event.poll()    
             
-            if event.type==pygame.KEYDOWN and event.key==275 and self.rightclick==0:
+            if event.type==pygame.KEYDOWN and event.key==275 and self.rightclick==0 and self.move==1:
                 #jump.play(0)
                 self.rightmove=1
                 self.rightclick=1
