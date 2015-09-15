@@ -26,6 +26,8 @@ import gtk
 import pygame
 import sys
 
+from elements import *
+
 
 
 class game:
@@ -38,7 +40,7 @@ class game:
 
         
         
-        
+        self.score=0
         self.left=True
         self.right=True
         
@@ -60,7 +62,7 @@ class game:
         self.rightcar_x=760
         #600
         
-        self.speed=8
+        self.speed=10
         
         self.anglespeed=3
         self.anglelimit=30
@@ -71,9 +73,13 @@ class game:
         
         #self.left_transit=self.right_transit=0
         
+        self.objectlist=[]
         
         
         
+        
+        
+        self.objectlist.append(element())
         
         
         
@@ -125,11 +131,11 @@ class game:
         self.background = pygame.transform.scale(pygame.image.load("assets/background.png").convert(),\
                                                  (491,768))
         
-        self.leftcar = pygame.transform.scale(pygame.image.load("assets/bluecar.png"),\
+        self.leftcar = pygame.transform.scale(pygame.image.load("assets/redcar.png"),\
                                               (45,90))
         
         
-        self.rightcar = pygame.transform.scale(pygame.image.load("assets/redcar.png"),\
+        self.rightcar = pygame.transform.scale(pygame.image.load("assets/bluecar.png"),\
                                               (45,90))
         
         
@@ -198,6 +204,27 @@ class game:
         
             #760
             #600
+            
+            
+            
+            
+            
+            # Elements display
+            
+            for i in self.objectlist:
+                
+                i.display(g)
+                
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             
             # Car angle reorientation
