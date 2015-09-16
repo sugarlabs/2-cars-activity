@@ -29,6 +29,7 @@ x_list=[390,510,640,760]
     
     
     
+    
 
 class element(object):
     
@@ -41,6 +42,7 @@ class element(object):
         #self.move=1
         self.blink=0
         self.c=0
+        self.playflag=0
       
         if(self.x==390 or self.x==510):
       
@@ -75,17 +77,19 @@ class element(object):
         car2_rect=g.rightcar.get_rect(center=(g.rightcar_x+g.rightcar.get_width()/2,\
                                          550+g.rightcar.get_height()/2))
          
-         
+        #Collision detection test 
          
         if(element_rect.colliderect(car1_rect) or element_rect.colliderect(car2_rect)):
              
             if(self.element==redsquare or self.element==bluesquare):
                  
                 g.collision=1
+                g.hit.play(0)
                  
              
             if(self.element==redcircle or self.element==bluecircle):
-                 
+                
+                g.scoresound.play(0)
                 g.score+=1
                 g.objectlist.remove(self)
                  
@@ -116,8 +120,10 @@ class element(object):
             g.objectlist.remove(self)
             
         
-        
-        if(self.shape==1 and self.y>=640):
+        # INcase of miss
+        if(self.shape==1 and self.y>=640 and self.playflag==0):
+            g.miss.play(0)
+            self.playflag=1
             
             g.move=0
             self.blink=1

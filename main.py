@@ -27,6 +27,8 @@ import pygame
 import sys
 
 from elements import *
+from welcomescreen import *
+from scorescreen import *
 
 
 
@@ -34,7 +36,7 @@ class game:
     
     
     def __init__(self):
-        pass
+        self.start=1
         
     def initialize(self):
 
@@ -86,6 +88,11 @@ class game:
         
         self.collision=0
         
+        #self.start=1
+        
+        
+        
+        
         
         
         
@@ -110,7 +117,7 @@ class game:
             
             self.gameDisplay = pygame.display.set_mode((self.info.current_w,self.info.current_h))
 
-            pygame.display.set_caption("Flappy Birds")
+            pygame.display.set_caption("2 Cars")
             #gameicon=pygame.image.load('images/icon.png')
             #pygame.display.set_icon(gameicon)
 
@@ -122,7 +129,7 @@ class game:
         self.font_size = 55
         self.font1= pygame.font.Font(self.font_path,self.font_size)
         self.font2=pygame.font.Font("fonts/sans.ttf",30)
-        self.font3=pygame.font.Font("fonts/sans.ttf",40)
+        self.font3=pygame.font.Font("fonts/gobold-light.ttf",40)
         self.font4=pygame.font.Font("fonts/sans.ttf",23)
         
         
@@ -143,7 +150,28 @@ class game:
                                               (45,90))
         
         
-      
+        
+        #Music load
+        
+        self.hit=pygame.mixer.Sound("assets/sounds/hit.ogg")
+        self.miss=pygame.mixer.Sound("assets/sounds/miss.ogg")
+        self.music=pygame.mixer.Sound("assets/sounds/music.ogg")
+        self.scoresound=pygame.mixer.Sound("assets/sounds/score.ogg")
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
 
     def make(self):
@@ -156,6 +184,7 @@ class game:
         clock=pygame.time.Clock()
             
         crashed=False   
+        self.music.play(-1)
 
         
         
@@ -174,14 +203,14 @@ class game:
             mos_x,mos_y=pygame.mouse.get_pos() 
             
             
-            '''
-            if self.welcomeflag == 1:
-                a = welcomescreen(self.gameDisplay)
-                a.run()
-                self.welcomeflag=0
-                self.keyinit=1
-                #self.dispinit()
-            '''    
+            
+            if self.start == 1:
+                a = welcomescreen()
+                a.run(g)
+                self.start=0
+                
+                
+                
             
             
             self.gameDisplay.fill(white)
@@ -196,27 +225,21 @@ class game:
             self.gameDisplay.blit(pygame.transform.rotate(self.rightcar,self.right_angle),(self.rightcar_x,550))
             
             
-            #self.gameDisplay.blit(self.leftcar,(510,550))
-            
-            #self.gameDisplay.blit(self.rightcar,(600,550))
             
             
             
-            #390
-            #510
-        
-        
-            #760
-            #600
             
             
+            
+            
+            # Obstacles placement
             
             self.i+=1
             
-            if(self.i>60):
+            if(self.i>50):
                 self.i=0
                 
-            if((self.i==20 or self.i==50) and self.move==1): 
+            if((self.i==20 or self.i==40) and self.move==1): 
                 
                 self.current=self.lastleft=self.lastright=element()
                 
@@ -267,6 +290,13 @@ class game:
                 
                 j.display(g)
                 
+                
+                
+            # Score blitting
+            
+            head3=self.font3.render(str(self.score),1,(white))
+            self.gameDisplay.blit(head3,(780,20))    
+                
             
             
             
@@ -274,11 +304,13 @@ class game:
                 self.timer+=1
                 
                 if(self.timer>=150):
-                    sys.exit()
+                    self.collision=1
                 
                 
             if(self.collision==1):
-                sys.exit()
+                a=scorescreen()
+                a.run(g,self.score)
+                self.initialize()
             
             
             
