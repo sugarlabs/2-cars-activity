@@ -209,7 +209,7 @@ class game:
             
             if self.start == 1:
                 a = welcomescreen()
-                a.run(g)
+                a.run(self)
                 self.start=0
                 
                 
@@ -291,7 +291,7 @@ class game:
             for j in self.objectlist:
                 
                 
-                j.display(g)
+                j.display(self)
                 
                 
                 
@@ -312,7 +312,7 @@ class game:
                 
             if(self.collision==1):
                 a=scorescreen()
-                a.run(g,self.score)
+                a.run(self,self.score)
                 self.initialize()
             
             
