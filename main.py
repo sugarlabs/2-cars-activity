@@ -88,6 +88,9 @@ class game:
         
         self.collision=0
         
+        
+        
+        self.lastleft=self.lastright=element()
         #self.start=1
         
         
@@ -236,21 +239,21 @@ class game:
             
             self.i+=1
             
-            if(self.i>50):
+            if(self.i>40):
                 self.i=0
                 
-            if((self.i==20 or self.i==40) and self.move==1): 
+            if((self.i==10 or self.i==35) and self.move==1): 
                 
-                self.current=self.lastleft=self.lastright=element()
+                self.current=element()
                 
                 check=True
                 
-                if(self.last.x<530):
+                if(self.last.x<530 ):
                     
                     while(True):
                         
                         self.current=element()
-                        if(self.current.x>530 and self.current.element!=self.lastright.element ):
+                        if(self.current.x>530 and self.current.element!=self.lastright.element):
                             
                             break;
                         
@@ -303,7 +306,7 @@ class game:
             if(self.move==0):
                 self.timer+=1
                 
-                if(self.timer>=150):
+                if(self.timer>=125):
                     self.collision=1
                 
                 
