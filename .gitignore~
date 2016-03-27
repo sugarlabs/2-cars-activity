@@ -2,3 +2,5 @@
 *.pyo
 *.py~
 *.md~
+dist/
+.gitignore
