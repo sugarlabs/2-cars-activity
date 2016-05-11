@@ -26,6 +26,7 @@ import gtk
 import pickle
 import pygame
 import sys
+from gettext import gettext as _
 
 
 
@@ -119,15 +120,15 @@ class scorescreen:
             
             #print scores
             
-            msg=font3.render("GAME OVER",2,white)
+            msg=font3.render(_("GAME OVER"),2,white)
             g.gameDisplay.blit(msg,(450,120))
             
             
-            scoress=font2.render("SCORE      "+str(scores),2,white)
+            scoress=font2.render(_("SCORE      ")+str(scores),2,white)
             
             g.gameDisplay.blit(scoress,(550,265))
             
-            scoress=font2.render("BEST        "+str(maxscore),2,white)
+            scoress=font2.render(_("BEST        ")+str(maxscore),2,white)
             
             g.gameDisplay.blit(scoress,(550,330))
             

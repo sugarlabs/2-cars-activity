@@ -25,6 +25,7 @@
 import gtk
 import pygame
 import sys
+from gettext import gettext as _
 
 from elements import *
 from welcomescreen import *
@@ -120,7 +121,7 @@ class game:
             
             self.gameDisplay = pygame.display.set_mode((self.info.current_w,self.info.current_h))
 
-            pygame.display.set_caption("2 Cars")
+            pygame.display.set_caption(_("2 Cars"))
             #gameicon=pygame.image.load('images/icon.png')
             #pygame.display.set_icon(gameicon)
 
