@@ -1,6 +1,0 @@
-*.pyc
-*.pyo
-*.py~
-*.md~
-dist/
-.gitignore
