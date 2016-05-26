@@ -55,7 +55,7 @@ class welcomescreen:
 
         button = pygame.image.load("assets/button.png")
 
-        font2 = pygame.font.Font("fonts/sans.ttf", 25)
+        font2 = pygame.font.Font("fonts/Arimo.ttf", 25)
 
         flag = 1
         ruleflag = 0

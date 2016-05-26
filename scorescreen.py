@@ -51,13 +51,8 @@ class scorescreen:
         restart = pygame.transform.scale(restart, (120, 120))
 
         # font load
-
-        #font_path = "fonts/sans.ttf"
-        #font_size = 55
-        #font1= pygame.font.Font(font_path, font_size)
-        font2 = pygame.font.Font("fonts/gobold-light.ttf", 30)
-        font3 = pygame.font.Font("fonts/vanadine.ttf", 80)
-        # font4=pygame.font.Font("fonts/sans.ttf",20)
+        font2 = pygame.font.Font("fonts/Arimo.ttf", 30)
+        font3 = pygame.font.Font("fonts/Arimo.ttf", 80)
 
         # Scores load
 

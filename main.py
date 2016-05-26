@@ -105,12 +105,12 @@ class game:
 
         # self.hit=pygame.mixer.Sound("assets/sounds/hit.ogg")
 
-        self.font_path = "fonts/sans.ttf"
+        self.font_path = "fonts/Arimo.ttf"
         self.font_size = 55
         self.font1 = pygame.font.Font(self.font_path, self.font_size)
-        self.font2 = pygame.font.Font("fonts/sans.ttf", 30)
-        self.font3 = pygame.font.Font("fonts/gobold-light.ttf", 40)
-        self.font4 = pygame.font.Font("fonts/sans.ttf", 23)
+        self.font2 = pygame.font.Font("fonts/Arimo.ttf", 30)
+        self.font3 = pygame.font.Font("fonts/Arimo.ttf", 40)
+        self.font4 = pygame.font.Font("fonts/Arimo.ttf", 23)
 
         # Load the images for elements
         # load_elements_images()
