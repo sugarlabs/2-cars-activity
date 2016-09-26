@@ -6,12 +6,14 @@ import event
 
 CANVAS = None
 
+
 class PygameCanvas(gtk.EventBox):
-    
+
     """
     mainwindow is the activity intself.
     """
-    def __init__(self, mainwindow, pointer_hint = True):
+
+    def __init__(self, mainwindow, pointer_hint=True):
         gtk.EventBox.__init__(self)
 
         global CANVAS
@@ -20,11 +22,11 @@ class PygameCanvas(gtk.EventBox):
 
         # Initialize Events translator before widget gets "realized".
         self.translator = event.Translator(mainwindow, self)
-        
+
         self._mainwindow = mainwindow
 
         self.set_flags(gtk.CAN_FOCUS)
-        
+
         self._socket = gtk.Socket()
         self.add(self._socket)
 
@@ -35,7 +37,7 @@ class PygameCanvas(gtk.EventBox):
     def run_pygame(self, main_fn):
         # Run the main loop after a short delay.  The reason for the delay is that the
         # Sugar activity is not properly created until after its constructor returns.
-        # If the Pygame main loop is called from the activity constructor, the 
+        # If the Pygame main loop is called from the activity constructor, the
         # constructor never returns and the activity freezes.
         gobject.idle_add(self._run_pygame_cb, main_fn)
 
@@ -43,13 +45,13 @@ class PygameCanvas(gtk.EventBox):
         # PygameCanvas.run_pygame can only be called once
         if self._initialized:
             return
-        
+
         # Preinitialize Pygame with the X window ID.
         os.environ['SDL_WINDOWID'] = str(self._socket.get_id())
         if pygame.display.get_surface() is not None:
             pygame.display.quit()
         pygame.init()
-        
+
         # Restore the default cursor.
         self._socket.window.set_cursor(None)
 

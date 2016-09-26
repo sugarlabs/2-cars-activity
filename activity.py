@@ -12,6 +12,7 @@ from sugar.activity.widgets import StopButton
 from gettext import gettext as _
 import main
 
+
 class Activity(activity.Activity):
 
     def __init__(self, handle):
@@ -45,4 +46,3 @@ class Activity(activity.Activity):
         stop_button.show()
 
         self.show_all()
-
