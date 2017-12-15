@@ -32,8 +32,12 @@ On Ubuntu systems these required dependencies (`python-gtk2-dev` and
 `python-pygame`) need to be manually installed.
 
 
-**Running on Ubuntu**
+**Running outside Sugar**
+
+
 - Install the dependencies - 
+
+On Ubuntu-
 ```
 sudo apt install python-gtk2-dev python-pygame
 ```
