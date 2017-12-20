@@ -81,12 +81,12 @@ class scorescreen:
             g.gameDisplay.blit(scorescreen, (350, 0))
 
             msg = font3.render(_("GAME OVER"), 2, white)
-            g.gameDisplay.blit(msg, (450, 120))
+            g.gameDisplay.blit(msg, (350, 120))
             scoress = font2.render(_("SCORE      ") + _(str(scores)), 2, white)
-            g.gameDisplay.blit(scoress, (550, 265))
+            g.gameDisplay.blit(scoress, (500, 265))
             scoress = font2.render(_("BEST        ") +
                                    _(str(maxscore)), 2, white)
-            g.gameDisplay.blit(scoress, (550, 330))
+            g.gameDisplay.blit(scoress, (510, 330))
 
             if restart.get_rect(center=(550 + 60, 420 + 60)).collidepoint(mos_x, mos_y):
                 g.gameDisplay.blit(pygame.transform.scale(
