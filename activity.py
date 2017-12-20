@@ -1,29 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import gtk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 import sugargame
 import sugargame.canvas
-from sugar.activity import activity
-from sugar.graphics.toolbarbox import ToolbarBox
-from sugar.activity.widgets import ActivityToolbarButton
-
-from sugar.activity.widgets import StopButton
+from sugar3.activity import activity
+from sugar3.graphics.toolbarbox import ToolbarBox
+from sugar3.activity.widgets import ActivityToolbarButton
+from sugar3.graphics.toolbutton import ToolButton
+from sugar3.activity.widgets import StopButton
 from gettext import gettext as _
 import main
-
 
 class Activity(activity.Activity):
 
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
         self.max_participants = 1
+        self.sound = True
         self.actividad = main.game()
         self.build_toolbar()
         self._pygamecanvas = sugargame.canvas.PygameCanvas(self)
         self.set_canvas(self._pygamecanvas)
         self._pygamecanvas.grab_focus()
-        self._pygamecanvas.run_pygame(self.actividad.make)
+        self._pygamecanvas.run_pygame(self.actividad.main)
 
     def build_toolbar(self):
 
@@ -35,7 +37,18 @@ class Activity(activity.Activity):
         toolbar_box.toolbar.insert(activity_button, -1)
         activity_button.show()
 
-        separator = gtk.SeparatorToolItem()
+        separator = Gtk.SeparatorToolItem()
+        separator.props.draw = False
+        separator.set_expand(False)
+        toolbar_box.toolbar.insert(separator, -1)
+        separator.show()
+
+        button = ToolButton('speaker-muted-100')
+        button.set_tooltip(_('Sound'))
+        button.connect('clicked', self.sound_control)
+        toolbar_box.toolbar.insert(button, -1)
+
+        separator = Gtk.SeparatorToolItem()
         separator.props.draw = False
         separator.set_expand(True)
         toolbar_box.toolbar.insert(separator, -1)
@@ -46,3 +59,14 @@ class Activity(activity.Activity):
         stop_button.show()
 
         self.show_all()
+
+    def sound_control(self, button):
+        self.sound = not self.sound
+        self.actividad.sound = self.sound
+        if not self.sound:
+            button.set_icon('speaker-muted-000')
+            button.set_tooltip(_('No sound'))
+        else:
+            button.set_icon('speaker-muted-100')
+            button.set_tooltip(_('Sound'))
+
