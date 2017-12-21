@@ -50,6 +50,8 @@ class scorescreen:
         font3 = pygame.font.Font("fonts/Arimo.ttf", 80)
 
         # Scores load
+	if os.path.exists("score.pkl")==False:
+	    open('score.pkl','w+')
 
         if os.path.getsize("score.pkl") == 0:
             with open('score.pkl', 'wb') as output:
