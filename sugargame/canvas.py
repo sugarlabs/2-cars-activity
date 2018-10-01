@@ -1,6 +1,7 @@
 import os
 from gi.repository import Gtk
 from gi.repository import GObject
+from gi.repository import GLib
 import pygame
 import event
 
@@ -37,7 +38,7 @@ class PygameCanvas(Gtk.EventBox):
         # Sugar activity is not properly created until after its constructor returns.
         # If the Pygame main loop is called from the activity constructor, the
         # constructor never returns and the activity freezes.
-        GObject.idle_add(self._run_pygame_cb, main_fn)
+        GLib.idle_add(self._run_pygame_cb, main_fn)
 
     def _run_pygame_cb(self, main_fn):
         # PygameCanvas.run_pygame can only be called once
