@@ -65,9 +65,9 @@ class game:
 
         try:
             pygame.mixer.init()
-        except Exception, err:
+        except Exception as err:
             self.sound = False
-            print 'error with sound', err
+            print('error with sound', err)
 
         self.info = pygame.display.Info()
         self.gameDisplay = pygame.display.get_surface()
