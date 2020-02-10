@@ -60,14 +60,7 @@ class game:
         self.collision = 0
         self.lastleft = self.lastright = element()
 
-        pygame.init()
         self.sound = True
-
-        try:
-            pygame.mixer.init()
-        except Exception as err:
-            self.sound = False
-            print('error with sound', err)
 
         self.info = pygame.display.Info()
         self.gameDisplay = pygame.display.get_surface()
@@ -102,17 +95,17 @@ class game:
         black = (0, 0, 0)
         white = (255, 255, 255)
         clock = pygame.time.Clock()
-        crashed = False
+        self.crashed = False
         self.music.play(-1)
         # GAME LOOP BEGINS !!!
-        while not crashed:
+        while not self.crashed:
             # Gtk events
             while Gtk.events_pending():
                 Gtk.main_iteration()
-            for event in pygame.event.get():
-                # totaltime+=timer.tick()
-                if event.type == pygame.QUIT:
-                    crashed = True
+            event = pygame.event.poll()
+            # totaltime+=timer.tick()
+            if event.type == pygame.QUIT:
+                return
 
             mos_x, mos_y = pygame.mouse.get_pos()
 
@@ -250,20 +243,9 @@ class game:
             pygame.display.update()
             clock.tick(60)
 
-            # Game crash or Close check
-            if crashed:
-                pygame.quit()
-                sys.exit()
-
-        # Just a window exception check condition
-        event1 = pygame.event.get()
-        if event1.type == pygame.QUIT:
-            crashed = True
-
-        if crashed:
-            pygame.quit()
-            sys.exit()
-
+       
 if __name__ == "__main__":
+    pygame.init()
+    pygame.mixer.init()
     g = game()
     g.make()
