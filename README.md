@@ -17,7 +17,7 @@ How to upgrade?
 ===============
 
 On Sugar desktop systems;
-* use [My Settings](https://help.sugarlabs.org/en/my_settings.html), [Software Update](https://help.sugarlabs.org/en/my_settings.html#software-update), or;
+* use [My Settings](https://help.sugarlabs.org/my_settings.html), [Software Update](https://help.sugarlabs.org/my_settings.html#software-update), or;
 * use Browse to open [activities.sugarlabs.org](https://activities.sugarlabs.org/), search for `Cars`, then download.
 
 How to run?
