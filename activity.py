@@ -71,9 +71,9 @@ class Activity(activity.Activity):
         self.sound = not self.sound
         self.actividad.sound = self.sound
         if not self.sound:
-            button.set_icon('speaker-muted-000')
+            button.set_icon_name('speaker-muted-000')
             button.set_tooltip(_('No sound'))
         else:
-            button.set_icon('speaker-muted-100')
+            button.set_icon_name('speaker-muted-100')
             button.set_tooltip(_('Sound'))
 
