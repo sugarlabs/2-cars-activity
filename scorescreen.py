@@ -28,6 +28,7 @@ import pickle
 import pygame
 import sys
 from gettext import gettext as _
+from score_path import score_path
 
 
 class scorescreen:
@@ -50,18 +51,19 @@ class scorescreen:
         font3 = pygame.font.Font("fonts/Arimo.ttf", 80)
 
         # Scores load
-        if os.path.exists("score.pkl") == False:
-            open('score.pkl', 'w+')
+        path = score_path()
+        if os.path.exists(path) == False:
+            open(path, 'w+')
 
-        if os.path.getsize("score.pkl") == 0:
-            with open('score.pkl', 'wb') as output:
+        if os.path.getsize(path) == 0:
+            with open(path, 'wb') as output:
                 pickle.dump(0, output, pickle.HIGHEST_PROTOCOL)
 
-        with open('score.pkl', 'rb') as input:  # REading
+        with open(path, 'rb') as input:  # REading
             maxscore = pickle.load(input)
 
         if(scores > maxscore):
-            with open('score.pkl', 'wb') as output:
+            with open(path, 'wb') as output:
                 pickle.dump(scores, output, pickle.HIGHEST_PROTOCOL)
             maxscore = scores
 
