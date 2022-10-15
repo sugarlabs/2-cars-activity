@@ -13,7 +13,7 @@ from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
 from gettext import gettext as _
-import main
+import game
 
 class Activity(activity.Activity):
 
@@ -21,10 +21,10 @@ class Activity(activity.Activity):
         activity.Activity.__init__(self, handle)
         self.max_participants = 1
         self.sound = True
-        self.actividad = main.game()
+        self.game = game.Game()
         self.build_toolbar()
         self._pygamecanvas = sugargame.canvas.PygameCanvas(self,
-            main=self.actividad.make(),
+            main=self.game.make(),
             modules=[pygame.display, pygame.mixer, pygame.font])
 
         self.set_canvas(self._pygamecanvas)
@@ -65,11 +65,11 @@ class Activity(activity.Activity):
         self.show_all()
 
     def _stop_cb(self, button):
-        self.actividad.crashed = False
+        self.game.crashed = False
 
     def sound_control(self, button):
         self.sound = not self.sound
-        self.actividad.sound = self.sound
+        self.game.sound = self.sound
         if not self.sound:
             button.set_icon_name('speaker-muted-000')
             button.set_tooltip(_('No sound'))
