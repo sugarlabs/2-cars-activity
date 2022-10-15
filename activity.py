@@ -75,3 +75,5 @@ class Activity(activity.Activity):
             button.set_icon_name('speaker-muted-100')
             button.set_tooltip(_('Sound'))
 
+    def get_preview(self):
+        return self._pygamecanvas.get_preview()
