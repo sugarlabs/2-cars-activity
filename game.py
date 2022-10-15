@@ -32,7 +32,7 @@ from welcomescreen import *
 from scorescreen import *
 
 
-class game:
+class Game:
 
     def __init__(self):
         self.start = 1
