@@ -62,16 +62,17 @@ class Game:
 
         self.sound = True
 
-        self.info = pygame.display.Info()
-        self.gameDisplay = pygame.display.get_surface()
-
-        if not(self.gameDisplay):
-            self.gameDisplay = pygame.display.set_mode(
-                (self.info.current_w, self.info.current_h))
-            pygame.display.set_caption(_("2 Cars"))
-
         self.font_path = "fonts/Arimo.ttf"
         self.font_size = 55
+
+    def run(self):
+        self.initialize()
+
+        screen = pygame.display.get_surface()
+        width = screen.get_width()
+        height = screen.get_height()
+        self.gameDisplay = screen
+
         self.font1 = pygame.font.Font(self.font_path, self.font_size)
         self.font2 = pygame.font.Font("fonts/Arimo.ttf", 30)
         self.font3 = pygame.font.Font("fonts/Arimo.ttf", 40)
@@ -89,23 +90,44 @@ class Game:
         self.music = pygame.mixer.Sound("assets/sounds/music.ogg")
         self.scoresound = pygame.mixer.Sound("assets/sounds/score.ogg")
 
-    def make(self):
-        self.initialize()
-        # Variable Initialization
         black = (0, 0, 0)
         white = (255, 255, 255)
         clock = pygame.time.Clock()
-        self.crashed = False
+        self.running = True
         self.music.play(-1)
         # GAME LOOP BEGINS !!!
-        while not self.crashed:
+        while self.running:
             # Gtk events
             while Gtk.events_pending():
                 Gtk.main_iteration()
-            event = pygame.event.poll()
-            # totaltime+=timer.tick()
-            if event.type == pygame.QUIT:
-                return
+            if not self.running:
+                break
+
+            # Pump PyGame messages.
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+                elif event.type == pygame.VIDEORESIZE:
+                    pygame.display.set_mode(event.size, pygame.RESIZABLE)
+                    width = screen.get_width()
+                    height = screen.get_height()
+                if event.type == pygame.KEYDOWN and \
+                     event.key == 276 and \
+                     self.leftclick == 0 and self.move == 1:
+                    self.leftmove = 1
+                    self.leftclick = 1
+
+                # left starts moving
+                if event.type == pygame.KEYUP and event.key == 276:
+                    self.leftclick = 0
+                if event.type == pygame.KEYDOWN and event.key == 275 and \
+                   self.rightclick == 0 and self.move == 1:
+                    # jump.play(0)
+                    self.rightmove = 1
+                    self.rightclick = 1
+                # right start moving
+                if event.type == pygame.KEYUP and event.key == 275:
+                    self.rightclick = 0
 
             mos_x, mos_y = pygame.mouse.get_pos()
 
@@ -219,21 +241,6 @@ class Game:
                     if(self.rightcar_x >= 760):
                         self.rightmove = 0
                         self.right = not self.right
-            # Keyboard Input
-            if event.type == pygame.KEYDOWN and event.key == 276 and self.leftclick == 0 and self.move == 1:
-                self.leftmove = 1
-                self.leftclick = 1
-
-            # left starts moving
-            if event.type == pygame.KEYUP and event.key == 276:
-                self.leftclick = 0
-            if event.type == pygame.KEYDOWN and event.key == 275 and self.rightclick == 0 and self.move == 1:
-                # jump.play(0)
-                self.rightmove = 1
-                self.rightclick = 1
-            # right start moving
-            if event.type == pygame.KEYUP and event.key == 275:
-                self.rightclick = 0
 
             # BLACK RECTANGLES DISPLAY
             pygame.draw.line(self.gameDisplay, black, (350, 0), (350, 768), 1)
