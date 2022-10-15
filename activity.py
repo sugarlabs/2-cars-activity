@@ -62,8 +62,6 @@ class Activity(activity.Activity):
         stop_button.show()
         stop_button.connect('clicked', self._stop_cb)
 
-        self.show_all()
-
     def _stop_cb(self, button):
         self.game.crashed = False
 
