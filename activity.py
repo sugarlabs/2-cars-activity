@@ -49,6 +49,8 @@ class Activity(activity.Activity):
         button = ToolButton('speaker-muted-100')
         button.set_tooltip(_('Sound'))
         button.connect('clicked', self.sound_control)
+        button.show()
+
         toolbar_box.toolbar.insert(button, -1)
 
         separator = Gtk.SeparatorToolItem()
