@@ -1,7 +1,7 @@
 import os
-from gi.repository import Gtk
-from gi.repository import GObject
-from gi.repository import GLib
+
+from gi.repository import Gtk, GObject, GLib
+
 import pygame
 import event
 
@@ -13,10 +13,10 @@ class PygameCanvas(Gtk.EventBox):
     mainwindow is the activity intself.
     """
     def __init__(self, mainwindow, pointer_hint = True):
-        GObject.GObject.__init__(self)
+        super().__init__()
 
         global CANVAS
-        assert CANVAS == None, "Only one PygameCanvas can be created, ever."
+        assert CANVAS is None, "Only one PygameCanvas can be created, ever."
         CANVAS = self
 
         # Initialize Events translator before widget gets "realized".
@@ -47,9 +47,7 @@ class PygameCanvas(Gtk.EventBox):
 
         # Preinitialize Pygame with the X window ID.
         os.environ['SDL_WINDOWID'] = str(self._socket.get_id())
-        if pygame.display.get_surface() is not None:
-            pygame.display.quit()
-        pygame.init()
+        pygame.display.init()
 
         # Restore the default cursor.
         self._socket.props.window.set_cursor(None)
