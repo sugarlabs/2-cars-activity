@@ -14,6 +14,7 @@ from sugar3.activity.widgets import StopButton
 from gettext import gettext as _
 import main
 
+
 class Activity(activity.Activity):
 
     def __init__(self, handle):
@@ -69,4 +70,3 @@ class Activity(activity.Activity):
         else:
             button.set_icon('speaker-muted-100')
             button.set_tooltip(_('Sound'))
-
