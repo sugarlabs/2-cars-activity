@@ -25,7 +25,6 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import pygame
 import sys
-from gettext import gettext as _
 
 
 class welcomescreen:
@@ -47,8 +46,6 @@ class welcomescreen:
         rules = pygame.image.load("assets/rules.png").convert()
         rules = pygame.transform.scale(rules, (490, 768))
         button = pygame.image.load("assets/button.png")
-        font2 = pygame.font.Font("fonts/Arimo.ttf", 25)
-        flag = 1
         ruleflag = 0
 
         # GAME LOOP BEGINS !!!
@@ -60,28 +57,33 @@ class welcomescreen:
                 # totaltime+=timer.tick()
                 if event.type == pygame.QUIT:
                     crashed = True
-                if event.type == pygame.KEYDOWN and (event.key == 276 or event.key == 275):
+                if (event.type == pygame.KEYDOWN and
+                        (event.key == 276 or event.key == 275)):
                     return
 
             mos_x, mos_y = pygame.mouse.get_pos()
 
             g.gameDisplay.fill(white)
-            if(ruleflag == 0):
+            if ruleflag == 0:
                 g.gameDisplay.blit(background, (350, 0))
-                if play.get_rect(center=(530 + 60, 300 + 60)).collidepoint(mos_x, mos_y):
+                if play.get_rect(
+                        center=(530 + 60, 300 + 60)).collidepoint(
+                            mos_x, mos_y):
                     g.gameDisplay.blit(pygame.transform.scale(
                         play, (124, 124)), (530 - 2, 300 - 2))
-                    if(pygame.mouse.get_pressed())[0] == 1:
+                    if pygame.mouse.get_pressed()[0] == 1:
                         ruleflag = 1
                 else:
                     g.gameDisplay.blit(play, (530, 300))
             else:
                 g.gameDisplay.blit(rules, (350, 0))
                 g.gameDisplay.blit(button, (540, 400))
-                if play.get_rect(center=(530 + 60, 550 + 60)).collidepoint(mos_x, mos_y):
+                if play.get_rect(
+                        center=(530 + 60, 550 + 60)).collidepoint(
+                            mos_x, mos_y):
                     g.gameDisplay.blit(pygame.transform.scale(
                         play, (124, 124)), (530 - 2, 550 - 2))
-                    if(pygame.mouse.get_pressed())[0] == 1:
+                    if pygame.mouse.get_pressed()[0] == 1:
                         return
                 else:
                     g.gameDisplay.blit(play, (530, 550))
@@ -105,7 +107,3 @@ class welcomescreen:
         if crashed:
             pygame.quit()
             sys.exit()
-
-if __name__ == "__main__":
-    g = welcomescreen()
-    g.run(gameDisplay)

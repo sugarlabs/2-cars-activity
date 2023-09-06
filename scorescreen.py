@@ -36,11 +36,8 @@ class scorescreen:
     def run(self, g, scores):
         black = (0, 0, 0)
         white = (255, 255, 255)
-        red = (255, 0, 0)
         clock = pygame.time.Clock()
         crashed = False
-        press = 0
-        land1x = 350
         scorescreen = pygame.image.load("assets/scorescreen.png").convert()
         scorescreen = pygame.transform.scale(scorescreen, (490, 768))
         restart = pygame.image.load("assets/restart.png")
@@ -52,7 +49,7 @@ class scorescreen:
 
         # Scores load
         path = score_path()
-        if os.path.exists(path) == False:
+        if not os.path.exists(path):
             open(path, 'w+')
 
         if os.path.getsize(path) == 0:
@@ -62,7 +59,7 @@ class scorescreen:
         with open(path, 'rb') as input:  # REading
             maxscore = pickle.load(input)
 
-        if(scores > maxscore):
+        if scores > maxscore:
             with open(path, 'wb') as output:
                 pickle.dump(scores, output, pickle.HIGHEST_PROTOCOL)
             maxscore = scores
@@ -92,10 +89,11 @@ class scorescreen:
                                    _(str(maxscore)), 2, white)
             g.gameDisplay.blit(scoress, (510, 330))
 
-            if restart.get_rect(center=(550 + 60, 420 + 60)).collidepoint(mos_x, mos_y):
+            if restart.get_rect(
+                    center=(550 + 60, 420 + 60)).collidepoint(mos_x, mos_y):
                 g.gameDisplay.blit(pygame.transform.scale(
                     restart, (124, 124)), (550 - 2, 420 - 2))
-                if(pygame.mouse.get_pressed())[0] == 1:
+                if pygame.mouse.get_pressed()[0] == 1:
                     return 1
             else:
                 g.gameDisplay.blit(restart, (550, 420))
@@ -106,7 +104,7 @@ class scorescreen:
             pygame.display.update()
             clock.tick(60)
 
-            if crashed == True:                       # Game crash or Close check
+            if crashed:  # Game crash or Close check
                 pygame.quit()
                 sys.exit()
 
@@ -115,6 +113,6 @@ class scorescreen:
         if event1.type == pygame.QUIT:
             crashed = True
 
-        if crashed == True:
+        if crashed:
             pygame.quit()
             sys.exit()

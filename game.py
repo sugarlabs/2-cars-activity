@@ -24,12 +24,11 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import pygame
-import sys
 from gettext import gettext as _
 
-from elements import *
-from welcomescreen import *
-from scorescreen import *
+from elements import element
+from welcomescreen import welcomescreen
+from scorescreen import scorescreen
 
 
 class Game:
@@ -69,8 +68,6 @@ class Game:
         self.initialize()
 
         screen = pygame.display.get_surface()
-        width = screen.get_width()
-        height = screen.get_height()
         self.gameDisplay = screen
 
         self.font1 = pygame.font.Font(self.font_path, self.font_size)
@@ -78,12 +75,14 @@ class Game:
         self.font3 = pygame.font.Font("fonts/Arimo.ttf", 40)
         self.font4 = pygame.font.Font("fonts/Arimo.ttf", 23)
 
-        self.background = pygame.transform.scale(pygame.image.load("assets/background.png").convert(),
-                                                 (491, 768))
-        self.leftcar = pygame.transform.scale(pygame.image.load("assets/redcar.png"),
-                                              (45, 90))
-        self.rightcar = pygame.transform.scale(pygame.image.load("assets/bluecar.png"),
-                                               (45, 90))
+        self.background = pygame.transform.scale(
+            pygame.image.load("assets/background.png").convert(),
+                             (491, 768))
+        self.leftcar = pygame.transform.scale(
+            pygame.image.load("assets/redcar.png"), (45, 90))
+        self.rightcar = pygame.transform.scale(
+            pygame.image.load("assets/bluecar.png"),
+                             (45, 90))
         # Music load
         self.hit = pygame.mixer.Sound("assets/sounds/hit.ogg")
         self.miss = pygame.mixer.Sound("assets/sounds/miss.ogg")
@@ -109,11 +108,9 @@ class Game:
                     return
                 elif event.type == pygame.VIDEORESIZE:
                     pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                    width = screen.get_width()
-                    height = screen.get_height()
                 if event.type == pygame.KEYDOWN and \
-                     event.key == 276 and \
-                     self.leftclick == 0 and self.move == 1:
+                    event.key == 276 and \
+                        self.leftclick == 0 and self.move == 1:
                     self.leftmove = 1
                     self.leftclick = 1
 
@@ -148,23 +145,24 @@ class Game:
             # Obstacles placement
             self.i += 1
 
-            if(self.i > 40):
+            if self.i > 40:
                 self.i = 0
 
-            if((self.i == 10 or self.i == 35) and self.move == 1):
+            if ((self.i == 10 or self.i == 35) and self.move == 1):
                 self.current = element()
-                check = True
-                if(self.last.x < 530):
-                    while(True):
+                if self.last.x < 530:
+                    while True:
                         self.current = element()
-                        if(self.current.x > 530 and self.current.element != self.lastright.element):
+                        if (self.current.x > 530 and
+                           self.current.element != self.lastright.element):
                             break
                     self.last = self.lastright = self.current
                     self.objectlist.append(self.lastright)
                 else:
-                    while(True):
+                    while True:
                         self.current = element()
-                        if(self.current.x < 530 and self.current.element != self.lastleft.element):
+                        if (self.current.x < 530 and
+                           self.current.element != self.lastleft.element):
                             break
                     self.last = self.lastleft = self.current
                     self.objectlist.append(self.lastleft)
@@ -177,68 +175,68 @@ class Game:
             head3 = self.font3.render(_(str(self.score)), 1, (white))
             self.gameDisplay.blit(head3, (780, 20))
 
-            if(self.move == 0):
+            if self.move == 0:
                 self.timer += 1
 
-                if(self.timer >= 125):
+                if self.timer >= 125:
                     self.collision = 1
 
-            if(self.collision == 1):
+            if self.collision == 1:
                 a = scorescreen()
                 a.run(self, self.score)
                 self.initialize()
 
             # Car angle reorientation
-            if(self.leftmove == 0):
-                if(self.left_angle > 0):
+            if self.leftmove == 0:
+                if self.left_angle > 0:
                     self.left_angle -= self.anglespeed
-                if(self.left_angle < 0):
+                if self.left_angle < 0:
                     self.left_angle += self.anglespeed
 
-            if(self.rightmove == 0):
-                if(self.right_angle > 0):
+            if self.rightmove == 0:
+                if self.right_angle > 0:
                     self.right_angle -= self.anglespeed
 
-                if(self.right_angle < 0):
+                if self.right_angle < 0:
                     self.right_angle += self.anglespeed
 
             # Car Movements
-            if(self.leftmove == 1):
+            if self.leftmove == 1:
                 # For left car updation
-                if(self.left == True):
+                if self.left:
                     self.leftcar_x += self.speed
                     # Angle update
-                    if(self.left_angle > -self.anglelimit):
+                    if self.left_angle > -self.anglelimit:
                         self.left_angle -= self.anglespeed
 
-                    if(self.leftcar_x >= 510):
+                    if self.leftcar_x >= 510:
                         self.leftmove = 0
                         self.left = not self.left
                 else:
                     self.leftcar_x -= self.speed
                     # Angle update
-                    if(self.left_angle < self.anglelimit):
+                    if self.left_angle < self.anglelimit:
                         self.left_angle += self.anglespeed
-                    if(self.leftcar_x <= 390):
+                    if self.leftcar_x <= 390:
                         self.leftmove = 0
                         self.left = not self.left
 
-            if(self.rightmove == 1):
+            if self.rightmove == 1:
                 # For right car updation
-                if(self.right == True):
+                if self.right:
                     self.rightcar_x -= self.speed
                     # Angle update
-                    if(self.right_angle < self.anglelimit):
+                    if self.right_angle < self.anglelimit:
                         self.right_angle += self.anglespeed
-                    if(self.rightcar_x <= 640):
+                    if self.rightcar_x <= 640:
                         self.rightmove = 0
                         self.right = not self.right
                 else:
                     self.rightcar_x += self.speed
                     # Angle update
-                    if(self.right_angle > -self.anglelimit):
+                    if self.right_angle > -self.anglelimit:
                         self.right_angle -= self.anglespeed
-                    if(self.rightcar_x >= 760):
+                    if self.rightcar_x >= 760:
                         self.rightmove = 0
                         self.right = not self.right
 
@@ -250,9 +248,9 @@ class Game:
             pygame.display.update()
             clock.tick(60)
 
-       
+
 if __name__ == "__main__":
     pygame.init()
     pygame.mixer.init()
-    g = game()
+    g = Game()
     g.make()

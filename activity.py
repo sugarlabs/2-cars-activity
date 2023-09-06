@@ -15,6 +15,7 @@ from sugar3.activity.widgets import StopButton
 from gettext import gettext as _
 import game
 
+
 class Activity(activity.Activity):
 
     def __init__(self, handle):
@@ -23,9 +24,11 @@ class Activity(activity.Activity):
         self.sound = True
         self.game = game.Game()
         self.build_toolbar()
-        self._pygamecanvas = sugargame.canvas.PygameCanvas(self,
+        self._pygamecanvas = sugargame.canvas.PygameCanvas(
+            self,
             main=self.game.run,
-            modules=[pygame.display, pygame.mixer, pygame.font])
+            modules=[pygame.display, pygame.mixer, pygame.font]
+            )
 
         self.set_canvas(self._pygamecanvas)
         self._pygamecanvas.grab_focus()
