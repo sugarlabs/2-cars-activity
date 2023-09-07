@@ -55,6 +55,8 @@ TICK_COUNTER_THRESHOLD = 40
 
 FONT_PATH_ARIMO = os.path.join("fonts", "Arimo.ttf")
 
+PAUSE_PATH = os.path.join("assets", "pause.png")
+
 BACKGROUND_IMAGE_PATH = os.path.join("assets", "background.png")
 REDCAR_IMAGE_PATH = os.path.join("assets", "redcar.png")
 BLUECAR_IMAGE_PATH = os.path.join("assets", "bluecar.png")
@@ -101,6 +103,9 @@ class Game:
         sys.exit()
 
     def load_assets(self):
+        # Pause button load
+        self.pause_image = pygame.image.load(PAUSE_PATH)
+
         # Load Images
         self.background_image = pygame.image.load(BACKGROUND_IMAGE_PATH)
         self.leftcar_image = pygame.image.load(REDCAR_IMAGE_PATH)
@@ -116,8 +121,11 @@ class Game:
         self.music = pygame.mixer.Sound(SOUND_MUSIC_PATH)
         self.scoresound = pygame.mixer.Sound(SOUND_SCORE_PATH)
 
-    # Scale images according to screen size, only happens once
     def scale_images(self):
+        self.pause_image_alpha = self.pause_image.convert_alpha()
+        self.pause = pygame.transform.scale(
+            self.pause_image_alpha, (self.pause_width, self.pause_height))
+
         self.background = pygame.transform.scale(
             self.background_image.convert(), (
                 int(self.background_width), int(self.background_height)))
@@ -159,6 +167,9 @@ class Game:
         self.leftcar_x = self.lane_1 - self.car_center
         self.rightcar_x = self.lane_4 - self.car_center
         self.car_y = self.screen_height * 0.73
+
+        self.pause_width = int(self.background_height // 23)
+        self.pause_height = int(self.background_height // 20)
 
         self.obj_dimension = int(self.background_height * 0.05)
         obj_center = self.obj_dimension // 2
@@ -203,6 +214,7 @@ class Game:
         self.draw_cars()
         self.draw_objects()
         self.draw_score()
+        self.draw_pause()
 
     def draw_cars(self):
         self.screen.blit(pygame.transform.rotate(
@@ -219,6 +231,15 @@ class Game:
         score_x = self.middle_of_screen_x + self.background_width // 2.4
         score_y = self.screen_height * 0.03
         self.screen.blit(score_object, (score_x, score_y))
+
+    def draw_pause(self):
+        pause_x = (
+            self.middle_of_screen_x -
+            self.background_width * 0.4 -
+            self.pause_width // 2
+        )
+        pause_y = self.screen_height * 0.065 - self.pause_height // 2
+        self.screen.blit(self.pause, (pause_x, pause_y))
 
     def handle_events(self):
         while Gtk.events_pending():
@@ -242,16 +263,65 @@ class Game:
             elif event.key == pygame.K_RIGHT:
                 self.is_right_pressed = False
 
+            if self.state == PLAY and event.key == pygame.K_SPACE:
+                self.state = PAUSE
+                self.paused_screen()
+
         mos_x, mos_y = pygame.mouse.get_pos()
 
+        pause_rect = self.pause.get_rect(
+            center=((self.middle_of_screen_x - self.background_width * 0.4),
+                    (self.screen_height * 0.065)))
+
+        if (pause_rect.collidepoint(mos_x, mos_y) and
+           event.type == pygame.MOUSEBUTTONUP and
+           event.button == 1 and
+           self.state == PLAY):
+            self.state = PAUSE
+            self.paused_screen()
+
         if (event.type == pygame.MOUSEBUTTONUP and
-           event.button == 1):
+           event.button == 1 and not
+           pause_rect.collidepoint(mos_x, mos_y)):
             if mos_x > self.middle_of_screen_x:
                 self.right_moved = 1
                 self.is_right_pressed = 1
             else:
                 self.left_moved = 1
                 self.is_left_pressed = 1
+
+    def paused_screen(self):
+        # create a semi-transparent black surface
+        overlay_color = pygame.Color(0, 0, 0, 150)
+        overlay_surface = pygame.Surface(
+            (self.screen_width, self.screen_height), pygame.SRCALPHA)
+        overlay_surface.fill(overlay_color)
+
+        self.screen.blit(overlay_surface, (0, 0))
+        pygame.display.update()
+
+        while self.state == PAUSE:
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.state = PLAY
+
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                pause_rect = self.pause.get_rect(
+                    center=(
+                        (self.middle_of_screen_x -
+                         self.background_width * 0.4),
+                        (self.screen_height * 0.065)))
+
+                if (pause_rect.collidepoint(mouse_x, mouse_y) and
+                   event.type == pygame.MOUSEBUTTONUP and
+                   event.button == 1):
+                    self.state = PLAY
 
     def update_game_state(self):
         self.update_tick_counter()
