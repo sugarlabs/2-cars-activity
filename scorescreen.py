@@ -21,100 +21,113 @@
 # Utkarsh Tiwari    iamutkarshtiwari@gmail.com
 
 import os
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 import pickle
-import pygame
 import sys
 from gettext import gettext as _
 from score_path import score_path
 
+import pygame
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
-class scorescreen:
+from sugar3.activity.activity import get_activity_root
 
-    def run(self, g, scores):
-        black = (0, 0, 0)
-        white = (255, 255, 255)
-        red = (255, 0, 0)
-        clock = pygame.time.Clock()
-        crashed = False
-        press = 0
-        land1x = 350
-        scorescreen = pygame.image.load("assets/scorescreen.png").convert()
-        scorescreen = pygame.transform.scale(scorescreen, (490, 768))
-        restart = pygame.image.load("assets/restart.png")
-        restart = pygame.transform.scale(restart, (120, 120))
+FPS = 60
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
-        # font load
-        font2 = pygame.font.Font("fonts/Arimo.ttf", 30)
-        font3 = pygame.font.Font("fonts/Arimo.ttf", 80)
+SCORESCREEN_PATH = os.path.join("assets", "scorescreen.png")
+RESTART_IMAGE_PATH = os.path.join("assets", "restart.png")
+HOME_IMAGE_PATH = os.path.join("assets", "home.png")
+FONT_PATH = os.path.join("fonts", "Arimo.ttf")
 
-        # Scores load
-        path = score_path()
-        if os.path.exists(path) == False:
-            open(path, 'w+')
 
-        if os.path.getsize(path) == 0:
-            with open(path, 'wb') as output:
+class Scorescreen:
+    def __init__(self, game):
+        self.running = True
+
+        self.scorescreen = self.load_scaled_image(
+            SCORESCREEN_PATH, (490, 768))
+        self.restart = self.load_scaled_image(
+            RESTART_IMAGE_PATH, (120, 120))
+        self.load_fonts(game)
+
+        self.score_path = os.path.join(
+            get_activity_root(), 'data', 'score.pkl')
+
+    def load_fonts(self, game):
+        self.font2 = pygame.font.Font(
+            FONT_PATH, 30)
+        self.font3 = pygame.font.Font(
+            FONT_PATH, 80)
+
+    # Load and Scale image
+    def load_scaled_image(self, path, size):
+        image = pygame.image.load(path)
+        width, height = size
+        scaled_image = pygame.transform.scale(
+            image.convert_alpha(), (int(width), int(height)))
+        return scaled_image
+
+    def read_max_score(self):
+        if not os.path.exists(self.score_path):
+            open(self.score_path, 'w+')
+
+        if os.path.getsize(self.score_path) == 0:
+            with open(self.score_path, 'wb') as output:
                 pickle.dump(0, output, pickle.HIGHEST_PROTOCOL)
 
-        with open(path, 'rb') as input:  # REading
-            maxscore = pickle.load(input)
+        with open(self.score_path, 'rb') as input:
+            max_score = pickle.load(input)
 
-        if(scores > maxscore):
-            with open(path, 'wb') as output:
-                pickle.dump(scores, output, pickle.HIGHEST_PROTOCOL)
-            maxscore = scores
+        return max_score
 
-        # GAME LOOP BEGINS !!!
-        while not crashed:
-            # Gtk events
+    def write_new_max_score(self, new_max_score):
+        with open(self.score_path, 'wb') as output:
+            pickle.dump(new_max_score, output, pickle.HIGHEST_PROTOCOL)
+
+    def run(self, game, scores):
+        clock = pygame.time.Clock()
+
+        max_score = self.read_max_score()
+        if scores > max_score:
+            self.write_new_max_score(scores)
+            max_score = scores
+
+        while self.running:
+            left_click_pressed = False
             while Gtk.events_pending():
                 Gtk.main_iteration()
             for event in pygame.event.get():
-                # totaltime+=timer.tick()
                 if event.type == pygame.QUIT:
-                    crashed = True
-                if event.type == pygame.KEYDOWN:
-                    # swoosh.play(0)
-                    return 1
+                    self.running = False
+                if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    left_click_pressed = True
 
             mos_x, mos_y = pygame.mouse.get_pos()
-            g.gameDisplay.fill(white)
-            g.gameDisplay.blit(scorescreen, (350, 0))
+            game.screen.fill(BLACK)
+            game.screen.blit(self.scorescreen, (350, 0))
 
-            msg = font3.render(_("GAME OVER"), 2, white)
-            g.gameDisplay.blit(msg, (350, 120))
-            scoress = font2.render(_("SCORE      ") + _(str(scores)), 2, white)
-            g.gameDisplay.blit(scoress, (500, 265))
-            scoress = font2.render(_("BEST        ") +
-                                   _(str(maxscore)), 2, white)
-            g.gameDisplay.blit(scoress, (510, 330))
+            msg = self.font3.render(_("GAME OVER"), 2, WHITE)
+            game.screen.blit(msg, (350, 120))
+            scoress = self.font2.render(_("SCORE      ") +
+                                        _(str(scores)), 2, WHITE)
+            game.screen.blit(scoress, (500, 265))
+            scoress = self.font2.render(_("BEST        ") +
+                                        _(str(max_score)), 2, WHITE)
+            game.screen.blit(scoress, (510, 330))
 
-            if restart.get_rect(center=(550 + 60, 420 + 60)).collidepoint(mos_x, mos_y):
-                g.gameDisplay.blit(pygame.transform.scale(
-                    restart, (124, 124)), (550 - 2, 420 - 2))
-                if(pygame.mouse.get_pressed())[0] == 1:
+            if self.restart.get_rect(
+                    center=(550 + 60, 420 + 60)).collidepoint(mos_x, mos_y):
+                game.screen.blit(pygame.transform.scale(
+                    self.restart, (124, 124)), (550 - 2, 420 - 2))
+                if left_click_pressed:
                     return 1
             else:
-                g.gameDisplay.blit(restart, (550, 420))
+                game.screen.blit(self.restart, (550, 420))
 
-            # left and right black background patches
-            pygame.draw.rect(g.gameDisplay, black, (0, 0, 350, 768))
-            pygame.draw.rect(g.gameDisplay, black, (840, 0, 693, 768))
             pygame.display.update()
-            clock.tick(60)
-
-            if crashed == True:                       # Game crash or Close check
-                pygame.quit()
-                sys.exit()
-
-        # Just a window exception check condition
-        event1 = pygame.event.get()
-        if event1.type == pygame.QUIT:
-            crashed = True
-
-        if crashed == True:
-            pygame.quit()
-            sys.exit()
+            clock.tick(FPS)
+        pygame.quit()
+        sys.exit()

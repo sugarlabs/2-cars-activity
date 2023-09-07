@@ -1,4 +1,3 @@
-import pygame
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -6,79 +5,54 @@ import sys
 from gettext import gettext as _
 from random import randint
 
-redcircle = pygame.transform.scale(
-    pygame.image.load("assets/redcircle.png"), (40, 40))
-bluecircle = pygame.transform.scale(
-    pygame.image.load("assets/bluecircle.png"), (40, 40))
-redsquare = pygame.transform.scale(
-    pygame.image.load("assets/redsquare.png"), (40, 40))
-bluesquare = pygame.transform.scale(
-    pygame.image.load("assets/bluesquare.png"), (40, 40))
-
-element_list = [redcircle, redsquare, bluecircle, bluesquare]
-x_list = [390, 510, 640, 760]
+OBJECTS_X_POSITIONS = [390, 510, 640, 760]
 
 
-class element(object):
+# Objects are circles and squares, Elements are objects and cars
+class Element(object):
+    def __init__(self, game):
+        self.x_to_draw = OBJECTS_X_POSITIONS[randint(0, 3)]
+        self.y_to_draw = -10
 
-    def __init__(self):
-        self.x = x_list[randint(0, 3)]
-        self.y = -10
-        self.flag = 0
-        self.shape = 0
-        # self.move=1
-        self.blink = 0
-        self.c = 0
-        self.playflag = 0
-
-        if(self.x == 390 or self.x == 510):
-            self.element = element_list[randint(0, 1)]
-            if(self.element == redcircle):
-                self.shape = 1
-            else:
-                self.shape = 2
+        if (self.x_to_draw in (OBJECTS_X_POSITIONS[0],
+                               OBJECTS_X_POSITIONS[1])):
+            object_index = randint(0, 1)
+            self.object = game.OBJECT_LIST[object_index]
         else:
-            self.element = element_list[randint(2, 3)]
-            if(self.element == bluecircle):
-                self.shape = 1
-            else:
-                self.shape = 2
+            object_index = randint(2, 3)
+            self.object = game.OBJECT_LIST[object_index]
 
-    def display(self, g):
-        element_rect = self.element.get_rect(center=(self.x + self.element.get_width() / 2,
-                                                     self.y + self.element.get_height() / 2))
-        car1_rect = g.leftcar.get_rect(center=(g.leftcar_x + g.leftcar.get_width() / 2,
-                                               550 + g.leftcar.get_height() / 2))
-        car2_rect = g.rightcar.get_rect(center=(g.rightcar_x + g.rightcar.get_width() / 2,
-                                                550 + g.rightcar.get_height() / 2))
-        # Collision detection test
-        if(element_rect.colliderect(car1_rect) or element_rect.colliderect(car2_rect)):
-            if(self.element == redsquare or self.element == bluesquare):
-                g.collision = 1
-                g.hit.play(0)
-            if(self.element == redcircle or self.element == bluecircle):
-                g.scoresound.play(0)
-                g.score += 1
-                g.objectlist.remove(self)
+    def display(self, game):
+        self.object_rect = self.object.get_rect(
+            center=(self.x_to_draw + self.object.get_width() // 2,
+                    self.y_to_draw + self.object.get_height() // 2))
+        self.car1_rect = game.leftcar.get_rect(
+            center=(game.leftcar_x + game.leftcar.get_width() // 2,
+                    550 + game.leftcar.get_height() // 2))
+        self.car2_rect = game.rightcar.get_rect(
+            center=(game.rightcar_x + game.rightcar.get_width() // 2,
+                    550 + game.rightcar.get_height() // 2))
 
-        if(g.move == 1):
-            self.y += 5
-        if(self.blink == 1):
-            self.c += 1
-            if(self.c > 50):
-                self.c = 0
-            if(self.c < 25):
-                g.gameDisplay.blit(self.element, (self.x, self.y))
-        else:
-            g.gameDisplay.blit(self.element, (self.x, self.y))
+        self.y_to_draw += 5  # Change perceived speed of cars
 
-        if(self.y >= 780):
-            self.flag = 1
-            g.objectlist.remove(self)
+        self.objects_interactions(game)
+        game.screen.blit(self.object, (self.x_to_draw, self.y_to_draw))
+        if self.y_to_draw >= 780:
+            game.objectlist.remove(self)
 
-        # INcase of miss
-        if(self.shape == 1 and self.y >= 640 and self.playflag == 0):
-            g.miss.play(0)
-            self.playflag = 1
-            g.move = 0
-            self.blink = 1
+    def objects_interactions(self, game):
+        if (self.object_rect.colliderect(self.car1_rect) or
+                self.object_rect.colliderect(self.car2_rect)):
+            if self.object in (game.red_square, game.blue_square):
+                game.collision = True
+                game.hit.play(0)
+            if self.object in (game.red_circle, game.blue_circle):
+                game.scoresound.play(0)
+                game.score += 1
+                game.objectlist.remove(self)
+
+        # Missed a coin(circle)
+        if (self.object in (game.red_circle, game.blue_circle) and
+                self.y_to_draw >= 640):
+            game.miss.play(0)
+            game.coin_miss = True
