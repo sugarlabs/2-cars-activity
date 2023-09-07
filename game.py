@@ -242,6 +242,17 @@ class Game:
             elif event.key == pygame.K_RIGHT:
                 self.is_right_pressed = False
 
+        mos_x, mos_y = pygame.mouse.get_pos()
+
+        if (event.type == pygame.MOUSEBUTTONUP and
+           event.button == 1):
+            if mos_x > self.middle_of_screen_x:
+                self.right_moved = 1
+                self.is_right_pressed = 1
+            else:
+                self.left_moved = 1
+                self.is_left_pressed = 1
+
     def update_game_state(self):
         self.update_tick_counter()
         self.handle_collision()
