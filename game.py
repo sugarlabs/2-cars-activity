@@ -82,7 +82,8 @@ class Game:
         clock = pygame.time.Clock()
         self.running = True
         self.music.play(-1)
-        self.screen = pygame.display.get_surface()
+        self.screen = pygame.display.set_mode(
+            pygame.display.get_surface().get_size())
 
         while self.running:
             self.render()
@@ -118,23 +119,57 @@ class Game:
     # Scale images according to screen size, only happens once
     def scale_images(self):
         self.background = pygame.transform.scale(
-            self.background_image, (491, 768))
-
+            self.background_image.convert(), (
+                int(self.background_width), int(self.background_height)))
         self.leftcar = pygame.transform.scale(
-            self.leftcar_image, (45, 90))
+            self.leftcar_image.convert_alpha(), (
+                int(self.car_width), int(self.car_height)))
         self.rightcar = pygame.transform.scale(
-            self.rightcar_image, (45, 90))
+            self.rightcar_image.convert_alpha(), (
+                int(self.car_width), int(self.car_height)))
 
         self.red_circle = pygame.transform.scale(
-            self.red_cricle_image, (40, 40))
+            self.red_cricle_image, (self.obj_dimension, self.obj_dimension))
         self.blue_circle = pygame.transform.scale(
-            self.blue_circle_image, (40, 40))
+            self.blue_circle_image, (self.obj_dimension, self.obj_dimension))
         self.red_square = pygame.transform.scale(
-            self.red_square_image, (40, 40))
+            self.red_square_image, (self.obj_dimension, self.obj_dimension))
         self.blue_square = pygame.transform.scale(
-            self.blue_square_image, (40, 40))
+            self.blue_square_image, (self.obj_dimension, self.obj_dimension))
 
     def initialize(self):
+        self.screen_width, self.screen_height = \
+            pygame.display.get_surface().get_size()
+        self.middle_of_screen_x = self.screen_width // 2
+
+        self.background_height = self.screen_height
+        self.background_width = int(self.background_height * 0.65)
+        self.background_x = (self.middle_of_screen_x -
+                             self.background_width // 2)
+
+        self.car_height = int(self.background_height * 0.12)
+        self.car_width = int(self.background_height * 0.06)
+
+        self.lane_1 = self.background_x + self.background_width // 8
+        self.lane_2 = self.lane_1 + self.background_width // 4
+        self.lane_3 = self.lane_2 + self.background_width // 4
+        self.lane_4 = self.lane_3 + self.background_width // 4
+
+        self.car_center = self.car_width // 2
+        self.leftcar_x = self.lane_1 - self.car_center
+        self.rightcar_x = self.lane_4 - self.car_center
+        self.car_y = self.screen_height * 0.73
+
+        self.obj_dimension = int(self.background_height * 0.05)
+        obj_center = self.obj_dimension // 2
+        self.OBJECTS_X_POSITIONS = [
+            self.lane_1 - obj_center,
+            self.lane_2 - obj_center,
+            self.lane_3 - obj_center,
+            self.lane_4 - obj_center]
+
+        self.speed = self.background_width * 0.02
+
         self.score = 0
         self.left = True
         self.right = True
@@ -142,13 +177,11 @@ class Game:
         self.left_moved = False
         self.right_moved = False
         self.left_angle = self.right_angle = 0
-        self.leftcar_x = 390
-        self.rightcar_x = 760
-        self.speed = 10
         self.tick_counter = 0
         self.scale_images()
         self.font3 = pygame.font.Font(
             FONT_PATH_ARIMO, 55)
+
         self.OBJECT_LIST = [
             self.red_circle,
             self.red_square,
@@ -157,6 +190,7 @@ class Game:
         self.objectlist = []
         self.last = Element(self)
         self.objectlist.append(self.last)
+
         self.lastright = self.lastleft = 0
         self.collision = False
         self.coin_miss = False
@@ -165,16 +199,16 @@ class Game:
 
     def render(self):
         self.screen.fill(BLACK)
-        self.screen.blit(self.background, (350, 0))
+        self.screen.blit(self.background, (self.background_x, 0))
         self.draw_cars()
         self.draw_objects()
         self.draw_score()
 
     def draw_cars(self):
         self.screen.blit(pygame.transform.rotate(
-            self.leftcar, self.left_angle), (self.leftcar_x, 550))
+            self.leftcar, self.left_angle), (self.leftcar_x, self.car_y))
         self.screen.blit(pygame.transform.rotate(
-            self.rightcar, self.right_angle), (self.rightcar_x, 550))
+            self.rightcar, self.right_angle), (self.rightcar_x, self.car_y))
 
     def draw_objects(self):
         for object in self.objectlist:
@@ -182,7 +216,9 @@ class Game:
 
     def draw_score(self):
         score_object = self.font3.render(_(str(self.score)), 1, (WHITE))
-        self.screen.blit(score_object, (780, 20))
+        score_x = self.middle_of_screen_x + self.background_width // 2.4
+        score_y = self.screen_height * 0.03
+        self.screen.blit(score_object, (score_x, score_y))
 
     def handle_events(self):
         while Gtk.events_pending():
@@ -229,21 +265,21 @@ class Game:
     def create_object_list(self):
         if self.tick_counter == 10 or self.tick_counter == 35:
             self.soon_to_draw = Element(self)
-            if self.last.x_to_draw < 530:
+            if self.last.x_to_draw < self.middle_of_screen_x:
                 while True:
-                    soon_to_draw = Element(self)
-                    if (soon_to_draw.x_to_draw > 530 and
-                       soon_to_draw.object != self.lastright.object):
+                    self.soon_to_draw = Element(self)
+                    if (self.soon_to_draw.x_to_draw > self.middle_of_screen_x and
+                       self.soon_to_draw.object != self.lastright.object):
                         break
-                self.last = self.lastright = soon_to_draw
+                self.last = self.lastright = self.soon_to_draw
                 self.objectlist.append(self.lastright)
             else:
                 while True:
-                    soon_to_draw = Element(self)
-                    if (soon_to_draw.x_to_draw < 530 and
-                       soon_to_draw.object != self.lastleft.object):
+                    self.soon_to_draw = Element(self)
+                    if (self.soon_to_draw.x_to_draw < self.middle_of_screen_x and
+                       self.soon_to_draw.object != self.lastleft.object):
                         break
-                self.last = self.lastleft = soon_to_draw
+                self.last = self.lastleft = self.soon_to_draw
                 self.objectlist.append(self.lastleft)
 
     def update_car_angles(self):
@@ -259,6 +295,10 @@ class Game:
                 self.right_angle += ANGLE_SPEED
 
     def update_car_positions(self):
+        left_car_left_bound = self.lane_1 - self.car_center
+        left_car_right_bound = self.lane_2 - self.car_center
+        right_car_left_bound = self.lane_3 - self.car_center
+        right_car_right_bound = self.lane_4 - self.car_center
         # Left car
         if self.left_moved:
             if self.left:
@@ -266,14 +306,14 @@ class Game:
                 if self.left_angle > -ANGLE_LIMIT:
                     self.left_angle -= ANGLE_SPEED
 
-                if self.leftcar_x >= 510:
+                if self.leftcar_x >= left_car_right_bound:
                     self.left_moved = False
                     self.left = not self.left
             else:
                 self.leftcar_x -= self.speed
                 if self.left_angle < ANGLE_LIMIT:
                     self.left_angle += ANGLE_SPEED
-                if self.leftcar_x <= 390:
+                if self.leftcar_x <= left_car_left_bound:
                     self.left_moved = False
                     self.left = not self.left
         # Right car
@@ -282,14 +322,14 @@ class Game:
                 self.rightcar_x -= self.speed
                 if self.right_angle < ANGLE_LIMIT:
                     self.right_angle += ANGLE_SPEED
-                if self.rightcar_x <= 640:
+                if self.rightcar_x <= right_car_left_bound:
                     self.right_moved = False
                     self.right = not self.right
             else:
                 self.rightcar_x += self.speed
                 if self.right_angle > -ANGLE_LIMIT:
                     self.right_angle -= ANGLE_SPEED
-                if self.rightcar_x >= 760:
+                if self.rightcar_x >= right_car_right_bound:
                     self.right_moved = False
                     self.right = not self.right
 
