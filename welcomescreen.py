@@ -20,92 +20,92 @@
 # Contact information:
 # Utkarsh Tiwari    iamutkarshtiwari@gmail.com
 
+import os
+import sys
+
+import pygame
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import pygame
-import sys
-from gettext import gettext as _
+
+FPS = 60
+BLACK = (0, 0, 0)
+
+WELCOMESCREEN_PATH = os.path.join("assets", "welcomescreen.png")
+PLAY_BUTTON_PATH = os.path.join("assets/play.png")
+RULESCREEN_PATH = os.path.join("assets/rules.png")
 
 
-class welcomescreen:
+class Welcomescreen:
+    def __init__(self, game):
+        self.running = True
 
-    def __init__(self):
-        pass
+        self.welcomescreen = self.load_scaled_image(
+            WELCOMESCREEN_PATH, (490, 768))
 
-    def run(self, g):
-        black = (0, 0, 0)
-        white = (255, 255, 255)
+        self.play_button = self.load_scaled_image(
+            PLAY_BUTTON_PATH, (120, 120))
+        self.rulescreen = self.load_scaled_image(
+            RULESCREEN_PATH, (490, 768))
+
+    def load_scaled_image(self, path, size):
+        width, height = size
+        image = pygame.image.load(path)
+        scaled_image = pygame.transform.scale(
+            image.convert_alpha(), (int(width), int(height)))
+        return scaled_image
+
+    def run(self, game):
         clock = pygame.time.Clock()
-        crashed = False
+        left_click_pressed = False
+        ruleflag = 0  # 0 for welcome screen, 1 for rules screen
 
-        # image load
-        land = pygame.image.load("assets/welcomescreen.png").convert()
-        background = pygame.transform.scale(land, (490, 768))
-        play = pygame.image.load("assets/play.png")
-        play = pygame.transform.scale(play, (120, 120))
-        rules = pygame.image.load("assets/rules.png").convert()
-        rules = pygame.transform.scale(rules, (490, 768))
-        button = pygame.image.load("assets/button.png")
-        font2 = pygame.font.Font("fonts/Arimo.ttf", 25)
-        flag = 1
-        ruleflag = 0
-
-        # GAME LOOP BEGINS !!!
-        while not crashed:
-            # Gtk events
+        while self.running:
             while Gtk.events_pending():
                 Gtk.main_iteration()
             for event in pygame.event.get():
-                # totaltime+=timer.tick()
                 if event.type == pygame.QUIT:
-                    crashed = True
-                if event.type == pygame.KEYDOWN and (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT):
-                    return
+                    self.running = False
+                if (event.type == pygame.KEYDOWN and
+                   (event.key == pygame.K_LEFT or
+                       event.key == pygame.K_RIGHT)):
+                    if ruleflag == 0:
+                        ruleflag = 1
+                    else:
+                        return
+                if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    left_click_pressed = True
 
             mos_x, mos_y = pygame.mouse.get_pos()
 
-            g.gameDisplay.fill(white)
-            if(ruleflag == 0):
-                g.gameDisplay.blit(background, (350, 0))
-                if play.get_rect(center=(530 + 60, 300 + 60)).collidepoint(mos_x, mos_y):
-                    g.gameDisplay.blit(pygame.transform.scale(
-                        play, (124, 124)), (530 - 2, 300 - 2))
-                    if(pygame.mouse.get_pressed())[0] == 1:
+            game.screen.fill(BLACK)
+            # Show Welcome screen
+            if ruleflag == 0:
+                game.screen.blit(self.welcomescreen, (350, 0))
+                if self.play_button.get_rect(
+                        center=(530 + 60, 300 + 60)).collidepoint(
+                            mos_x, mos_y):
+                    game.screen.blit(pygame.transform.scale(
+                        self.play_button, (124, 124)), (530 - 2, 300 - 2))
+                    if left_click_pressed:
+                        left_click_pressed = False
                         ruleflag = 1
                 else:
-                    g.gameDisplay.blit(play, (530, 300))
+                    game.screen.blit(self.play_button, (530, 300))
+            # Show Rules screen
             else:
-                g.gameDisplay.blit(rules, (350, 0))
-                g.gameDisplay.blit(button, (540, 400))
-                if play.get_rect(center=(530 + 60, 550 + 60)).collidepoint(mos_x, mos_y):
-                    g.gameDisplay.blit(pygame.transform.scale(
-                        play, (124, 124)), (530 - 2, 550 - 2))
-                    if(pygame.mouse.get_pressed())[0] == 1:
+                game.screen.blit(self.rulescreen, (350, 0))
+                if self.play_button.get_rect(
+                        center=(530 + 60, 550 + 60)).collidepoint(
+                            mos_x, mos_y):
+                    game.screen.blit(pygame.transform.scale(
+                        self.play_button, (124, 124)), (530 - 2, 550 - 2))
+                    if left_click_pressed:
                         return
                 else:
-                    g.gameDisplay.blit(play, (530, 550))
+                    game.screen.blit(self.play_button, (530, 550))
 
-            # left and right black background patches
-            pygame.draw.rect(g.gameDisplay, black, (0, 0, 350, 768))
-            pygame.draw.rect(g.gameDisplay, black, (840, 0, 693, 768))
             pygame.display.update()
-            clock.tick(60)
-
-            # Game crash or Close check
-            if crashed:
-                pygame.quit()
-                sys.exit()
-
-        # Just a window exception check condition
-        event1 = pygame.event.get()
-        if event1.type == pygame.QUIT:
-            crashed = True
-
-        if crashed:
-            pygame.quit()
-            sys.exit()
-
-if __name__ == "__main__":
-    g = welcomescreen()
-    g.run(gameDisplay)
+            clock.tick(FPS)
+        pygame.quit()
+        sys.exit()
