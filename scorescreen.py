@@ -45,10 +45,13 @@ FONT_PATH = os.path.join("fonts", "Arimo.ttf")
 class Scorescreen:
     def __init__(self, game):
         self.running = True
-        self.button_size = (game.background_width * 0.24)
 
         self.scorescreen = self.load_scaled_image(
             SCORESCREEN_PATH, (game.background_width, game.background_height))
+
+        self.button_size = (game.background_width * 0.24)
+        self.home = self.load_scaled_image(
+            HOME_IMAGE_PATH, (self.button_size, self.button_size))
         self.restart = self.load_scaled_image(
             RESTART_IMAGE_PATH, (self.button_size, self.button_size))
 
@@ -123,13 +126,34 @@ class Scorescreen:
                 game.screen_height * 0.23,
                 self.font2, game)
 
-            restart_x = game.middle_of_screen_x
+            home_x = game.middle_of_screen_x - self.button_size * 3/4
+            restart_x = game.middle_of_screen_x + self.button_size * 3/4
+
+            # Check if home button is hovered
+            home_rect = self.home.get_rect(
+                center=(home_x, (game.screen_height // 2)))
+            if home_rect.collidepoint(mos_x, mos_y):
+                self.home_rescaled = pygame.transform.scale(
+                    self.home,
+                    (int(self.button_size * 1.1),
+                     int(self.button_size * 1.1)))
+                game.screen.blit(
+                    self.home_rescaled,
+                    (home_x - self.button_size * 1.1 // 2,
+                     game.screen_height // 2 - self.button_size * 1.1 // 2))
+
+                if left_click_pressed:
+                    return 0
+            else:
+                game.screen.blit(
+                    self.home,
+                    (home_x - self.button_size // 2,
+                     game.screen_height // 2 - self.button_size // 2))
 
             # Check if restart button is hovered
             restart_rect = self.restart.get_rect(
                 center=(restart_x, (game.screen_height // 2)))
             if restart_rect.collidepoint(mos_x, mos_y):
-
                 self.restart_rescaled = pygame.transform.scale(
                     self.restart,
                     (int(self.button_size * 1.1),
