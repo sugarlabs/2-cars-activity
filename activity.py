@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from gettext import gettext as _
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+
+import pygame
 import sugargame
 import sugargame.canvas
-import pygame
 from sugar3.activity import activity
 from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
-from gettext import gettext as _
+
 import game
 
 
