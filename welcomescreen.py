@@ -40,12 +40,16 @@ class Welcomescreen:
         self.running = True
 
         self.welcomescreen = self.load_scaled_image(
-            WELCOMESCREEN_PATH, (490, 768))
+            WELCOMESCREEN_PATH,
+            (game.background_width,
+             game.background_height))
 
+        self.play_dimensions = (game.background_width * 0.24)
         self.play_button = self.load_scaled_image(
-            PLAY_BUTTON_PATH, (120, 120))
+            PLAY_BUTTON_PATH, (self.play_dimensions, self.play_dimensions))
+
         self.rulescreen = self.load_scaled_image(
-            RULESCREEN_PATH, (490, 768))
+            RULESCREEN_PATH, (game.background_width, game.background_height))
 
     def load_scaled_image(self, path, size):
         width, height = size
@@ -79,31 +83,54 @@ class Welcomescreen:
 
             game.screen.fill(BLACK)
             # Show Welcome screen
-            if ruleflag == 0:
-                game.screen.blit(self.welcomescreen, (350, 0))
+            if (ruleflag == 0):
+                game.screen.blit(self.welcomescreen, (game.background_x, 0))
+                # Check if start button is hovered
                 if self.play_button.get_rect(
-                        center=(530 + 60, 300 + 60)).collidepoint(
-                            mos_x, mos_y):
-                    game.screen.blit(pygame.transform.scale(
-                        self.play_button, (124, 124)), (530 - 2, 300 - 2))
+                   center=((game.middle_of_screen_x),
+                           (game.screen_height // 2))).collidepoint(
+                               mos_x, mos_y):
+                    self.play_button_rescaled = pygame.transform.scale(
+                        self.play_button, (int(self.play_dimensions * 1.1),
+                                           int(self.play_dimensions * 1.1)))
+                    game.screen.blit(
+                        self.play_button_rescaled, (
+                            game.middle_of_screen_x - (
+                                self.play_dimensions) * 1.1 // 2,
+                            game.screen_height // 2 - (
+                                self.play_dimensions) * 1.1 // 2))
                     if left_click_pressed:
                         left_click_pressed = False
                         ruleflag = 1
                 else:
-                    game.screen.blit(self.play_button, (530, 300))
-
+                    game.screen.blit(self.play_button, (
+                        game.middle_of_screen_x - (self.play_dimensions) // 2,
+                        game.screen_height // 2 - (self.play_dimensions) // 2))
             # Show Rules screen
             else:
-                game.screen.blit(self.rulescreen, (350, 0))
+                game.screen.blit(self.rulescreen, (game.background_x, 0))
+                # Check if start button is hovered
                 if self.play_button.get_rect(
-                        center=(530 + 60, 550 + 60)).collidepoint(
-                            mos_x, mos_y):
-                    game.screen.blit(pygame.transform.scale(
-                        self.play_button, (124, 124)), (530 - 2, 550 - 2))
+                    center=((game.middle_of_screen_x),
+                            (game.screen_height * 0.8))).collidepoint(
+                                mos_x, mos_y):
+                    self.play_button_rescaled = pygame.transform.scale(
+                        self.play_button,
+                        (int(self.play_dimensions * 1.1),
+                         int(self.play_dimensions * 1.1)))
+                    game.screen.blit(
+                        self.play_button_rescaled, (
+                            game.middle_of_screen_x - (
+                                self.play_dimensions) * 1.1 // 2,
+                            game.screen_height * 0.8 - (
+                                self.play_dimensions) * 1.1 // 2))
                     if left_click_pressed:
                         return
                 else:
-                    game.screen.blit(self.play_button, (530, 550))
-
+                    game.screen.blit(self.play_button, (
+                        game.middle_of_screen_x - (
+                            self.play_dimensions) // 2,
+                        game.screen_height * 0.8 - (
+                            self.play_dimensions) // 2))
             pygame.display.update()
             clock.tick(FPS)
