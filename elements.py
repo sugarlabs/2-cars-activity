@@ -27,6 +27,7 @@ class Element(object):
         self.car2_rect = game.rightcar.get_rect(
             center=(game.rightcar_x + game.rightcar.get_width() // 2,
                     game.car_y + game.rightcar.get_height() // 2))
+
         # Change perceived speed of cars
         self.y_to_draw += game.background_height * 0.0065
 

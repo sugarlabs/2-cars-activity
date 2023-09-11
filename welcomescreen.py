@@ -83,9 +83,11 @@ class Welcomescreen:
             mos_x, mos_y = pygame.mouse.get_pos()
 
             game.screen.fill(BLACK)
+
             # Show Welcome screen
-            if (ruleflag == 0):
+            if ruleflag == 0:
                 game.screen.blit(self.welcomescreen, (game.background_x, 0))
+
                 # Check if start button is hovered
                 if self.play_button.get_rect(
                    center=((game.middle_of_screen_x),
@@ -107,9 +109,11 @@ class Welcomescreen:
                     game.screen.blit(self.play_button, (
                         game.middle_of_screen_x - (self.play_dimensions) // 2,
                         game.screen_height // 2 - (self.play_dimensions) // 2))
+
             # Show Rules screen
             else:
                 game.screen.blit(self.rulescreen, (game.background_x, 0))
+
                 # Check if start button is hovered
                 if self.play_button.get_rect(
                     center=((game.middle_of_screen_x),

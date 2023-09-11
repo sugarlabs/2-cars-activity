@@ -116,6 +116,7 @@ class Scorescreen:
             # Display GAME OVER in the middle of screen
             self.display_in_center(
                 _("GAME OVER"), game.screen_height * 0.03, self.font3, game)
+
             # Display scores in the middle of screen
             self.display_in_center(
                 _("SCORE      ") + _(str(scores)),

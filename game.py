@@ -103,6 +103,7 @@ class Game:
         sys.exit()
 
     def load_assets(self):
+
         # Pause button load
         self.pause_image = pygame.image.load(PAUSE_PATH)
 
@@ -291,6 +292,7 @@ class Game:
                 self.is_left_pressed = 1
 
     def paused_screen(self):
+
         # create a semi-transparent black surface
         overlay_color = pygame.Color(0, 0, 0, 150)
         overlay_surface = pygame.Surface(
@@ -305,8 +307,7 @@ class Game:
                 Gtk.main_iteration()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.running = False
 
                 if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                     self.state = PLAY
@@ -345,22 +346,22 @@ class Game:
 
     def create_object_list(self):
         if self.tick_counter == 10 or self.tick_counter == 35:
-            self.soon_to_draw = Element(self)
+            pending_element = Element(self)
             if self.last.x_to_draw < self.middle_of_screen_x:
                 while True:
-                    self.soon_to_draw = Element(self)
-                    if (self.soon_to_draw.x_to_draw > self.middle_of_screen_x and
-                       self.soon_to_draw.object != self.lastright.object):
+                    pending_element = Element(self)
+                    if (pending_element.x_to_draw > self.middle_of_screen_x and
+                       pending_element.object != self.lastright.object):
                         break
-                self.last = self.lastright = self.soon_to_draw
+                self.last = self.lastright = pending_element
                 self.objectlist.append(self.lastright)
             else:
                 while True:
-                    self.soon_to_draw = Element(self)
-                    if (self.soon_to_draw.x_to_draw < self.middle_of_screen_x and
-                       self.soon_to_draw.object != self.lastleft.object):
+                    pending_element = Element(self)
+                    if (pending_element.x_to_draw < self.middle_of_screen_x and
+                       pending_element.object != self.lastleft.object):
                         break
-                self.last = self.lastleft = self.soon_to_draw
+                self.last = self.lastleft = pending_element
                 self.objectlist.append(self.lastleft)
 
     def update_car_angles(self):
@@ -380,6 +381,7 @@ class Game:
         left_car_right_bound = self.lane_2 - self.car_center
         right_car_left_bound = self.lane_3 - self.car_center
         right_car_right_bound = self.lane_4 - self.car_center
+
         # Left car
         if self.left_moved:
             if self.left:
@@ -397,6 +399,7 @@ class Game:
                 if self.leftcar_x <= left_car_left_bound:
                     self.left_moved = False
                     self.left = not self.left
+
         # Right car
         if self.right_moved:
             if self.right:
