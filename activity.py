@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from gettext import gettext as _
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+
+import pygame
 import sugargame
 import sugargame.canvas
 from sugar3.activity import activity
@@ -11,8 +15,9 @@ from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
-from gettext import gettext as _
-import main
+
+import game
+
 
 class Activity(activity.Activity):
 
@@ -20,12 +25,16 @@ class Activity(activity.Activity):
         activity.Activity.__init__(self, handle)
         self.max_participants = 1
         self.sound = True
-        self.actividad = main.game()
+        self.game = game.Game()
         self.build_toolbar()
-        self._pygamecanvas = sugargame.canvas.PygameCanvas(self)
+        self._pygamecanvas = sugargame.canvas.PygameCanvas(
+            self,
+            main=self.game.run,
+            modules=[pygame.display, pygame.mixer, pygame.font]
+            )
+
         self.set_canvas(self._pygamecanvas)
         self._pygamecanvas.grab_focus()
-        self._pygamecanvas.run_pygame(self.actividad.make)
 
     def build_toolbar(self):
 
@@ -46,6 +55,8 @@ class Activity(activity.Activity):
         button = ToolButton('speaker-muted-100')
         button.set_tooltip(_('Sound'))
         button.connect('clicked', self.sound_control)
+        button.show()
+
         toolbar_box.toolbar.insert(button, -1)
 
         separator = Gtk.SeparatorToolItem()
@@ -57,16 +68,20 @@ class Activity(activity.Activity):
         stop_button = StopButton(self)
         toolbar_box.toolbar.insert(stop_button, -1)
         stop_button.show()
+        stop_button.connect('clicked', self._stop_cb)
 
-        self.show_all()
+    def _stop_cb(self, button):
+        self.game.running = False
 
     def sound_control(self, button):
         self.sound = not self.sound
-        self.actividad.sound = self.sound
+        self.game.sound = self.sound
         if not self.sound:
-            button.set_icon('speaker-muted-000')
+            button.set_icon_name('speaker-muted-000')
             button.set_tooltip(_('No sound'))
         else:
-            button.set_icon('speaker-muted-100')
+            button.set_icon_name('speaker-muted-100')
             button.set_tooltip(_('Sound'))
 
+    def get_preview(self):
+        return self._pygamecanvas.get_preview()
