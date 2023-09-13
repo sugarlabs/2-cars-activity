@@ -112,21 +112,21 @@ class Game:
                     width = screen.get_width()
                     height = screen.get_height()
                 if event.type == pygame.KEYDOWN and \
-                     event.key == 276 and \
+                     event.key == pygame.K_LEFT and \
                      self.leftclick == 0 and self.move == 1:
                     self.leftmove = 1
                     self.leftclick = 1
 
                 # left starts moving
-                if event.type == pygame.KEYUP and event.key == 276:
+                if event.type == pygame.KEYUP and event.key == pygame.K_LEFT:
                     self.leftclick = 0
-                if event.type == pygame.KEYDOWN and event.key == 275 and \
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT and \
                    self.rightclick == 0 and self.move == 1:
                     # jump.play(0)
                     self.rightmove = 1
                     self.rightclick = 1
                 # right start moving
-                if event.type == pygame.KEYUP and event.key == 275:
+                if event.type == pygame.KEYUP and event.key == pygame.K_RIGHT:
                     self.rightclick = 0
 
             mos_x, mos_y = pygame.mouse.get_pos()
