@@ -1,7 +1,3 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-from gettext import gettext as _
 from random import randint
 
 OBJECTS_X_POSITIONS = [390, 510, 640, 760]

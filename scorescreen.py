@@ -22,9 +22,7 @@
 
 import os
 import pickle
-import sys
 from gettext import gettext as _
-from score_path import score_path
 
 import pygame
 import gi
@@ -106,13 +104,20 @@ class Scorescreen:
             game.screen.fill(BLACK)
             game.screen.blit(self.scorescreen, (350, 0))
 
-            msg = self.font3.render(_("GAME OVER"), 2, WHITE)
+            msg = self.font3.render(
+                _("GAME OVER"),
+                2,
+                WHITE)
             game.screen.blit(msg, (350, 120))
-            scoress = self.font2.render(_("SCORE      ") +
-                                        _(str(scores)), 2, WHITE)
+            scoress = self.font2.render(
+                _("SCORE      ") + _(str(scores)),
+                2,
+                WHITE)
             game.screen.blit(scoress, (500, 265))
-            scoress = self.font2.render(_("BEST        ") +
-                                        _(str(max_score)), 2, WHITE)
+            scoress = self.font2.render(
+                _("BEST        ") + _(str(max_score)),
+                2,
+                WHITE)
             game.screen.blit(scoress, (510, 330))
 
             if self.restart.get_rect(
