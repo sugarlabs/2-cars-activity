@@ -71,21 +71,18 @@ class Scorescreen:
         return scaled_image
 
     def read_max_score(self):
-        if not os.path.exists(self.score_path):
-            open(self.score_path, 'w+')
-
-        if os.path.getsize(self.score_path) == 0:
-            with open(self.score_path, 'wb') as output:
-                pickle.dump(0, output, pickle.HIGHEST_PROTOCOL)
-
-        with open(self.score_path, 'rb') as input:
-            max_score = pickle.load(input)
-
-        return max_score
+        if os.path.exists(self.score_path) and \
+                os.path.getsize(self.score_path) > 0:
+            with open(self.score_path, 'rb') as input_file:
+                max_score = pickle.load(input_file)
+                return max_score
+        else:
+            self.write_new_max_score(0)
+            return 0
 
     def write_new_max_score(self, new_max_score):
-        with open(self.score_path, 'wb') as output:
-            pickle.dump(new_max_score, output, pickle.HIGHEST_PROTOCOL)
+        with open(self.score_path, 'wb') as output_file:
+            pickle.dump(new_max_score, output_file, pickle.HIGHEST_PROTOCOL)
 
     def run(self, game, scores):
         clock = pygame.time.Clock()
@@ -129,5 +126,4 @@ class Scorescreen:
 
             pygame.display.update()
             clock.tick(FPS)
-        pygame.quit()
-        sys.exit()
+        return
