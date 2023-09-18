@@ -22,7 +22,6 @@
 
 import os
 from gettext import gettext as _
-import sys
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -81,30 +80,7 @@ class Game:
         pygame.mixer.init()
         self.load_assets()
 
-    def run(self):
-        self.initialize()
-        clock = pygame.time.Clock()
-        self.running = True
-        self.music.play(-1)
-        self.screen = pygame.display.get_surface()
-
-        while self.running:
-            self.render()
-            if self.state == WELCOME:
-                screen = Welcomescreen(self)
-                screen.run(self)
-                self.state = PLAY
-
-            self.handle_events()
-            self.update_game_state()
-
-            pygame.display.update()
-            clock.tick(FPS)
-        pygame.quit()
-        sys.exit()
-
     def load_assets(self):
-        # Load Images
         self.background_image = pygame.image.load(BACKGROUND_IMAGE_PATH)
         self.leftcar_image = pygame.image.load(REDCAR_IMAGE_PATH)
         self.rightcar_image = pygame.image.load(BLUECAR_IMAGE_PATH)
@@ -113,13 +89,11 @@ class Game:
         self.red_square_image = pygame.image.load(RED_SQUARE_PATH)
         self.blue_square_image = pygame.image.load(BLUE_SQUARE_PATH)
 
-        # Load Music
         self.hit = pygame.mixer.Sound(SOUND_HIT_PATH)
         self.miss = pygame.mixer.Sound(SOUND_MISS_PATH)
         self.music = pygame.mixer.Sound(SOUND_MUSIC_PATH)
         self.scoresound = pygame.mixer.Sound(SOUND_SCORE_PATH)
 
-    # Scale images according to screen size, only happens once
     def scale_images(self):
         self.background = pygame.transform.scale(
             self.background_image, (491, 768))
@@ -167,13 +141,6 @@ class Game:
         self.lastleft = self.lastright = Element(self)
         self.sound = True
 
-    def render(self):
-        self.screen.fill(BLACK)
-        self.screen.blit(self.background, (350, 0))
-        self.draw_cars()
-        self.draw_objects()
-        self.draw_score()
-
     def draw_cars(self):
         self.screen.blit(pygame.transform.rotate(
             self.leftcar, self.left_angle), (self.leftcar_x, 550))
@@ -188,34 +155,31 @@ class Game:
         score_object = self.font3.render(_(str(self.score)), 1, (WHITE))
         self.screen.blit(score_object, (780, 20))
 
+    def render(self):
+        self.screen.fill(BLACK)
+        self.screen.blit(self.background, (350, 0))
+        self.draw_cars()
+        self.draw_objects()
+        self.draw_score()
+
     def handle_events(self):
         while Gtk.events_pending():
             Gtk.main_iteration()
         for event in pygame.event.get():
-            self.handle_input(event)
-
-    def handle_input(self, event):
-        if event.type == pygame.QUIT:
-            self.running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and not self.is_left_pressed:
-                self.left_moved = True
-                self.is_left_pressed = True
-            elif event.key == pygame.K_RIGHT and not self.is_right_pressed:
-                self.right_moved = True
-                self.is_right_pressed = True
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                self.is_left_pressed = False
-            elif event.key == pygame.K_RIGHT:
-                self.is_right_pressed = False
-
-    def update_game_state(self):
-        self.update_tick_counter()
-        self.handle_collision()
-        self.create_object_list()
-        self.update_car_angles()
-        self.update_car_positions()
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and not self.is_left_pressed:
+                    self.left_moved = True
+                    self.is_left_pressed = True
+                elif event.key == pygame.K_RIGHT and not self.is_right_pressed:
+                    self.right_moved = True
+                    self.is_right_pressed = True
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    self.is_left_pressed = False
+                elif event.key == pygame.K_RIGHT:
+                    self.is_right_pressed = False
 
     def update_tick_counter(self):
         self.tick_counter += 1
@@ -236,16 +200,16 @@ class Game:
             if self.last.x_to_draw < 530:
                 while True:
                     soon_to_draw = Element(self)
-                    if (soon_to_draw.x_to_draw > 530 and
-                       soon_to_draw.object != self.lastright.object):
+                    if soon_to_draw.x_to_draw > 530 and \
+                       soon_to_draw.object != self.lastright.object:
                         break
                 self.last = self.lastright = soon_to_draw
                 self.objectlist.append(self.lastright)
             else:
                 while True:
                     soon_to_draw = Element(self)
-                    if (soon_to_draw.x_to_draw < 530 and
-                       soon_to_draw.object != self.lastleft.object):
+                    if soon_to_draw.x_to_draw < 530 and \
+                       soon_to_draw.object != self.lastleft.object:
                         break
                 self.last = self.lastleft = soon_to_draw
                 self.objectlist.append(self.lastleft)
@@ -263,7 +227,6 @@ class Game:
                 self.right_angle += ANGLE_SPEED
 
     def update_car_positions(self):
-        # Left car
         if self.left_moved:
             if self.left:
                 self.leftcar_x += self.speed
@@ -280,7 +243,7 @@ class Game:
                 if self.leftcar_x <= 390:
                     self.left_moved = False
                     self.left = not self.left
-        # Right car
+
         if self.right_moved:
             if self.right:
                 self.rightcar_x -= self.speed
@@ -297,7 +260,35 @@ class Game:
                     self.right_moved = False
                     self.right = not self.right
 
-       
+    def update_game_state(self):
+        self.update_tick_counter()
+        self.handle_collision()
+        self.create_object_list()
+        self.update_car_angles()
+        self.update_car_positions()
+
+    def run(self):
+        self.initialize()
+        clock = pygame.time.Clock()
+        self.running = True
+        self.music.play(-1)
+        self.screen = pygame.display.get_surface()
+
+        while self.running:
+            self.render()
+            if self.state == WELCOME:
+                screen = Welcomescreen(self)
+                screen.run(self)
+                self.state = PLAY
+
+            self.handle_events()
+            self.update_game_state()
+
+            pygame.display.update()
+            clock.tick(FPS)
+        return
+
+
 if __name__ == "__main__":
     pygame.display.set_mode((1200, 900))
     game = Game()
