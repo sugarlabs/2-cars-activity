@@ -10,7 +10,6 @@ from gi.repository import Gtk
 import pygame
 import sugargame
 import sugargame.canvas
-import pygame
 from sugar3.activity import activity
 from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.activity.widgets import ActivityToolbarButton
@@ -28,7 +27,8 @@ class Activity(activity.Activity):
         self.sound = True
         self.game = game.Game()
         self.build_toolbar()
-        self._pygamecanvas = sugargame.canvas.PygameCanvas(self,
+        self._pygamecanvas = sugargame.canvas.PygameCanvas(
+            self,
             main=self.game.run,
             modules=[pygame.display, pygame.mixer, pygame.font])
 
