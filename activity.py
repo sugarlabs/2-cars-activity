@@ -17,7 +17,7 @@ from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
 
-import game
+import main
 
 
 class Activity(activity.Activity):
@@ -81,6 +81,3 @@ class Activity(activity.Activity):
         else:
             button.set_icon_name('speaker-muted-100')
             button.set_tooltip(_('Sound'))
-
-    def get_preview(self):
-        return self._pygamecanvas.get_preview()
