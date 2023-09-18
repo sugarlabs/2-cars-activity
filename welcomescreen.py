@@ -21,7 +21,6 @@
 # Utkarsh Tiwari    iamutkarshtiwari@gmail.com
 
 import os
-import sys
 
 import pygame
 import gi
@@ -32,8 +31,8 @@ FPS = 60
 BLACK = (0, 0, 0)
 
 WELCOMESCREEN_PATH = os.path.join("assets", "welcomescreen.png")
-PLAY_BUTTON_PATH = os.path.join("assets/play.png")
-RULESCREEN_PATH = os.path.join("assets/rules.png")
+PLAY_BUTTON_PATH = os.path.join("assets", "play.png")
+RULESCREEN_PATH = os.path.join("assets", "rules.png")
 
 
 class Welcomescreen:
@@ -66,13 +65,13 @@ class Welcomescreen:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                if (event.type == pygame.KEYDOWN and
-                   (event.key == pygame.K_LEFT or
-                       event.key == pygame.K_RIGHT)):
-                    if ruleflag == 0:
-                        ruleflag = 1
-                    else:
-                        return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT or \
+                            event.key == pygame.K_RIGHT:
+                        if ruleflag == 0:
+                            ruleflag = 1
+                        else:
+                            return
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                     left_click_pressed = True
 
@@ -92,6 +91,7 @@ class Welcomescreen:
                         ruleflag = 1
                 else:
                     game.screen.blit(self.play_button, (530, 300))
+
             # Show Rules screen
             else:
                 game.screen.blit(self.rulescreen, (350, 0))
@@ -107,5 +107,3 @@ class Welcomescreen:
 
             pygame.display.update()
             clock.tick(FPS)
-        pygame.quit()
-        sys.exit()
