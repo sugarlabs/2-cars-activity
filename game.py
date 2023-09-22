@@ -32,9 +32,6 @@ from elements import Element
 from welcomescreen import Welcomescreen
 from scorescreen import Scorescreen
 
-# Enable use of activity with `python3 game.py`
-os.environ['SUGAR_BUNDLE_ID'] = 'org.sugarlabs.2cars'
-
 FPS = 60
 
 # Game states
