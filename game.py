@@ -67,10 +67,6 @@ BLUE_SQUARE_PATH = os.path.join("assets", "bluesquare.png")
 
 
 class Game:
-<<<<<<< HEAD:game.py
-
-=======
->>>>>>> 34c7954 (Refactor activity):main.py
     def __init__(self):
         self.state = WELCOME
         pygame.font.init()
