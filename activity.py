@@ -17,7 +17,7 @@ from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
 
-import main
+import game
 
 
 class Activity(activity.Activity):
