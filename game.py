@@ -71,6 +71,7 @@ class Game:
         self.state = WELCOME
         pygame.font.init()
         pygame.mixer.init()
+        self.sound = True
         self.load_assets()
 
     def load_assets(self):
@@ -132,7 +133,6 @@ class Game:
         self.collision = False
         self.coin_miss = False
         self.lastleft = self.lastright = Element(self)
-        self.sound = True
 
     def draw_cars(self):
         self.screen.blit(pygame.transform.rotate(
@@ -269,6 +269,10 @@ class Game:
 
         while self.running:
             self.render()
+            if self.sound:
+                pygame.mixer.unpause()
+            else:
+                pygame.mixer.pause()
             if self.state == WELCOME:
                 screen = Welcomescreen(self)
                 screen.run(self)
