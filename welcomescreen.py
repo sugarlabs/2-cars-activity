@@ -60,6 +60,10 @@ class Welcomescreen:
         ruleflag = 0  # 0 for welcome screen, 1 for rules screen
 
         while self.running:
+            if game.sound:
+                pygame.mixer.unpause()
+            else:
+                pygame.mixer.pause()
             while Gtk.events_pending():
                 Gtk.main_iteration()
             for event in pygame.event.get():

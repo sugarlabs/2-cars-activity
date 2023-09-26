@@ -94,6 +94,10 @@ class Scorescreen:
 
         while self.running:
             left_click_pressed = False
+            if game.sound:
+                pygame.mixer.unpause()
+            else:
+                pygame.mixer.pause()
             while Gtk.events_pending():
                 Gtk.main_iteration()
             for event in pygame.event.get():
