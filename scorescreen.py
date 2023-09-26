@@ -22,9 +22,7 @@
 
 import os
 import pickle
-import sys
 from gettext import gettext as _
-from score_path import score_path
 
 import pygame
 import gi
@@ -46,11 +44,13 @@ FONT_PATH = os.path.join("fonts", "Arimo.ttf")
 class Scorescreen:
     def __init__(self, game):
         self.running = True
+        self.button_size = (game.background_width * 0.24)
 
         self.scorescreen = self.load_scaled_image(
-            SCORESCREEN_PATH, (490, 768))
+            SCORESCREEN_PATH, (game.background_width, game.background_height))
         self.restart = self.load_scaled_image(
-            RESTART_IMAGE_PATH, (120, 120))
+            RESTART_IMAGE_PATH, (self.button_size, self.button_size))
+
         self.load_fonts(game)
 
         self.score_path = os.path.join(
@@ -58,11 +58,10 @@ class Scorescreen:
 
     def load_fonts(self, game):
         self.font2 = pygame.font.Font(
-            FONT_PATH, 30)
+            FONT_PATH, int(game.background_width * 0.06))
         self.font3 = pygame.font.Font(
-            FONT_PATH, 80)
+            FONT_PATH, int(game.background_width * 0.16))
 
-    # Load and Scale image
     def load_scaled_image(self, path, size):
         image = pygame.image.load(path)
         width, height = size
@@ -104,26 +103,52 @@ class Scorescreen:
 
             mos_x, mos_y = pygame.mouse.get_pos()
             game.screen.fill(BLACK)
-            game.screen.blit(self.scorescreen, (350, 0))
+            game.screen.blit(self.scorescreen, (game.background_x, 0))
 
-            msg = self.font3.render(_("GAME OVER"), 2, WHITE)
-            game.screen.blit(msg, (350, 120))
-            scoress = self.font2.render(_("SCORE      ") +
-                                        _(str(scores)), 2, WHITE)
-            game.screen.blit(scoress, (500, 265))
-            scoress = self.font2.render(_("BEST        ") +
-                                        _(str(max_score)), 2, WHITE)
-            game.screen.blit(scoress, (510, 330))
+            # Display GAME OVER in the middle of screen
+            self.display_in_center(
+                _("GAME OVER"), game.screen_height * 0.03, self.font3, game)
+            # Display scores in the middle of screen
+            self.display_in_center(
+                _("SCORE      ") + _(str(scores)),
+                game.screen_height * 0.18,
+                self.font2,
+                game)
+            self.display_in_center(
+                _("BEST         ") + _(str(max_score)),
+                game.screen_height * 0.23,
+                self.font2,
+                game)
 
-            if self.restart.get_rect(
-                    center=(550 + 60, 420 + 60)).collidepoint(mos_x, mos_y):
-                game.screen.blit(pygame.transform.scale(
-                    self.restart, (124, 124)), (550 - 2, 420 - 2))
+            restart_x = game.middle_of_screen_x
+
+            # Check if restart button is hovered
+            restart_rect = self.restart.get_rect(
+                center=(restart_x, (game.screen_height // 2)))
+            if restart_rect.collidepoint(mos_x, mos_y):
+
+                self.restart_rescaled = pygame.transform.scale(
+                    self.restart,
+                    (int(self.button_size * 1.1),
+                     int(self.button_size * 1.1)))
+                game.screen.blit(
+                    self.restart_rescaled,
+                    (restart_x - self.button_size * 1.1 // 2,
+                     game.screen_height // 2 - self.button_size * 1.1 // 2))
+
                 if left_click_pressed:
                     return 1
             else:
-                game.screen.blit(self.restart, (550, 420))
+                game.screen.blit(
+                    self.restart,
+                    (restart_x - self.button_size // 2,
+                     game.screen_height // 2 - self.button_size // 2))
 
             pygame.display.update()
             clock.tick(FPS)
-        return
+
+    def display_in_center(self, text, y, font, game):
+        msg = font.render(text, 2, WHITE)
+        text_width, text_height = msg.get_size()
+        text_x = game.screen_width // 2 - text_width // 2
+        game.screen.blit(msg, (text_x, y))
