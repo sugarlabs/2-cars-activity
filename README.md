@@ -54,7 +54,7 @@ sudo dnf install pygtk2 pygame
 ```
 git clone https://github.com/sugarlabs/2-cars-activity.git
 cd 2-cars-activity
-python main.py
+python3 game.py
 ```
 
 **Running inside Sugar**
