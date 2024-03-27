@@ -87,6 +87,14 @@ class Game:
         self.music = pygame.mixer.Sound(SOUND_MUSIC_PATH)
         self.scoresound = pygame.mixer.Sound(SOUND_SCORE_PATH)
 
+        self.sounds = [self.hit, self.miss, self.music, self.scoresound]
+        self.volume = 1
+
+    def toggle_mute(self):
+        self.volume = 0 if self.volume == 1 else 1
+        for sound in self.sounds:
+            sound.set_volume(self.volume)
+
     def scale_images(self):
         self.background = pygame.transform.scale(
             self.background_image, (491, 768))
