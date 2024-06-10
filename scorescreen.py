@@ -104,7 +104,10 @@ class Scorescreen:
             game.screen.fill(BLACK)
             game.screen.blit(self.scorescreen, (350, 0))
 
-            msg = self.font3.render(_("GAME OVER"), 2, WHITE)
+            msg = self.font3.render(
+                _("GAME OVER"),
+                2,
+                WHITE)
             game.screen.blit(msg, (350, 120))
             scoress = self.font2.render(
                 _("SCORE      ") + _(str(scores)),
